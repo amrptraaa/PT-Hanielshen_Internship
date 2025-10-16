@@ -37,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Toaster, toast } from "react-hot-toast";
 
 export default function PekerjaPage() {
   const [pekerja, setPekerja] = useState([
@@ -145,6 +146,7 @@ export default function PekerjaPage() {
 
   const handleDelete = (id: number) => {
     setPekerja((prev) => prev.filter((item) => item.id !== id));
+    toast.success("Data berhasil dihapus!");
   };
 
   const handleChange = (
@@ -172,6 +174,7 @@ export default function PekerjaPage() {
       nohp: "",
       jabatan: "pekerja tetap",
     });
+    toast.success("Data berhasil ditambahkan!");
   };
 
   const handleEdit = (e: React.FormEvent) => {
@@ -180,300 +183,305 @@ export default function PekerjaPage() {
       prev.map((p) => (p.id === selectedPekerja.id ? { ...p, ...formData } : p))
     );
     setIsEditOpen(false);
+    toast.success("Data berhasil diubah!");
   };
 
   // Fungsi untuk format ID 0001, 0002 ...
   const formatId = (id: number) => id.toString().padStart(4, "0");
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Data Pekerja</h1>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-[#CDF463] text-black hover:bg-[#b5da55]">
-              <Plus className="mr-2 h-4 w-4" /> Create
-            </Button>
-          </DialogTrigger>
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold">Data Pekerja</h1>
+          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-[#CDF463] text-black hover:bg-[#b5da55]">
+                <Plus className="mr-2 h-4 w-4" /> Create
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Tambah Pekerja Baru</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                <div>
+                  <Label>Nama</Label>
+                  <Input
+                    name="nama"
+                    value={formData.nama}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Password</Label>
+                  <Input
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>No Handphone</Label>
+                  <Input
+                    name="nohp"
+                    value={formData.nohp}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Jabatan</Label>
+                  <Select
+                    value={formData.jabatan}
+                    onValueChange={(val) =>
+                      setFormData({ ...formData, jabatan: val })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih Jabatan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {jabatanOptions.map((j) => (
+                        <SelectItem key={j} value={j}>
+                          {j}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsCreateOpen(false)}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
+                  >
+                    Simpan
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div className="rounded-md border bg-white shadow-md">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Nama</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>No Handphone</TableHead>
+                <TableHead>Jabatan</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pekerja.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>{formatId(row.id)}</TableCell>
+                  <TableCell>{row.nama}</TableCell>
+                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.nohp}</TableCell>
+                  <TableCell>{row.jabatan}</TableCell>
+                  <TableCell className="flex justify-end gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-blue-500 border-blue-200 hover:bg-blue-100"
+                      onClick={() => {
+                        setSelectedPekerja(row);
+                        setIsDetailOpen(true);
+                        setFormData({ ...row });
+                      }}
+                    >
+                      <Eye size={16} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-yellow-500 border-yellow-200 hover:bg-yellow-100"
+                      onClick={() => {
+                        setSelectedPekerja(row);
+                        setFormData({ ...row });
+                        setIsEditOpen(true);
+                      }}
+                    >
+                      <Edit2 size={16} />
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-500 border-red-200 hover:bg-red-100"
+                          onClick={() => setDeleteId(row.id)}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Apakah Anda yakin ingin menghapus data ini?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Data pekerja <b>{row.nama}</b> akan dihapus secara
+                            permanen.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Batal</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-500 hover:bg-red-600 text-white"
+                            onClick={() => handleDelete(row.id)}
+                          >
+                            Hapus
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Detail Pekerja</DialogTitle>
+            </DialogHeader>
+            {selectedPekerja && (
+              <div className="space-y-2">
+                <p>
+                  <b>ID:</b> {formatId(selectedPekerja.id)}
+                </p>
+                <p>
+                  <b>Nama:</b> {selectedPekerja.nama}
+                </p>
+                <p>
+                  <b>Email:</b> {selectedPekerja.email}
+                </p>
+                <p>
+                  <b>Password:</b> {selectedPekerja.password}
+                </p>
+                <p>
+                  <b>No HP:</b> {selectedPekerja.nohp}
+                </p>
+                <p>
+                  <b>Jabatan:</b> {selectedPekerja.jabatan}
+                </p>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>Tambah Pekerja Baru</DialogTitle>
+              <DialogTitle>Edit Data Pekerja</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-              <div>
-                <Label>Nama</Label>
-                <Input
-                  name="nama"
-                  value={formData.nama}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label>Email</Label>
-                <Input
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label>Password</Label>
-                <Input
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label>No Handphone</Label>
-                <Input
-                  name="nohp"
-                  value={formData.nohp}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label>Jabatan</Label>
-                <Select
-                  value={formData.jabatan}
-                  onValueChange={(val) =>
-                    setFormData({ ...formData, jabatan: val })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih Jabatan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {jabatanOptions.map((j) => (
-                      <SelectItem key={j} value={j}>
-                        {j}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsCreateOpen(false)}
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
-                >
-                  Simpan
-                </Button>
-              </div>
-            </form>
+            {selectedPekerja && (
+              <form onSubmit={handleEdit} className="space-y-4 mt-4">
+                <div>
+                  <Label>Nama</Label>
+                  <Input
+                    name="nama"
+                    value={formData.nama}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Password</Label>
+                  <Input
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>No Handphone</Label>
+                  <Input
+                    name="nohp"
+                    value={formData.nohp}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Jabatan</Label>
+                  <Select
+                    value={formData.jabatan}
+                    onValueChange={(val) =>
+                      setFormData({ ...formData, jabatan: val })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih Jabatan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {jabatanOptions.map((j) => (
+                        <SelectItem key={j} value={j}>
+                          {j}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsEditOpen(false)}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
+                  >
+                    Simpan
+                  </Button>
+                </div>
+              </form>
+            )}
           </DialogContent>
         </Dialog>
       </div>
-
-      <div className="rounded-md border bg-white shadow-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Nama</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>No Handphone</TableHead>
-              <TableHead>Jabatan</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {pekerja.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{formatId(row.id)}</TableCell>
-                <TableCell>{row.nama}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.nohp}</TableCell>
-                <TableCell>{row.jabatan}</TableCell>
-                <TableCell className="flex justify-end gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-blue-500 border-blue-200 hover:bg-blue-100"
-                    onClick={() => {
-                      setSelectedPekerja(row);
-                      setIsDetailOpen(true);
-                      setFormData({ ...row });
-                    }}
-                  >
-                    <Eye size={16} />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-yellow-500 border-yellow-200 hover:bg-yellow-100"
-                    onClick={() => {
-                      setSelectedPekerja(row);
-                      setFormData({ ...row });
-                      setIsEditOpen(true);
-                    }}
-                  >
-                    <Edit2 size={16} />
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-red-500 border-red-200 hover:bg-red-100"
-                        onClick={() => setDeleteId(row.id)}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Apakah Anda yakin ingin menghapus data ini?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Data pekerja <b>{row.nama}</b> akan dihapus secara
-                          permanen.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-red-500 hover:bg-red-600 text-white"
-                          onClick={() => handleDelete(row.id)}
-                        >
-                          Hapus
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Detail Pekerja</DialogTitle>
-          </DialogHeader>
-          {selectedPekerja && (
-            <div className="space-y-2">
-              <p>
-                <b>ID:</b> {formatId(selectedPekerja.id)}
-              </p>
-              <p>
-                <b>Nama:</b> {selectedPekerja.nama}
-              </p>
-              <p>
-                <b>Email:</b> {selectedPekerja.email}
-              </p>
-              <p>
-                <b>Password:</b> {selectedPekerja.password}
-              </p>
-              <p>
-                <b>No HP:</b> {selectedPekerja.nohp}
-              </p>
-              <p>
-                <b>Jabatan:</b> {selectedPekerja.jabatan}
-              </p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Edit Data Pekerja</DialogTitle>
-          </DialogHeader>
-          {selectedPekerja && (
-            <form onSubmit={handleEdit} className="space-y-4 mt-4">
-              <div>
-                <Label>Nama</Label>
-                <Input
-                  name="nama"
-                  value={formData.nama}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label>Email</Label>
-                <Input
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label>Password</Label>
-                <Input
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label>No Handphone</Label>
-                <Input
-                  name="nohp"
-                  value={formData.nohp}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label>Jabatan</Label>
-                <Select
-                  value={formData.jabatan}
-                  onValueChange={(val) =>
-                    setFormData({ ...formData, jabatan: val })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih Jabatan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {jabatanOptions.map((j) => (
-                      <SelectItem key={j} value={j}>
-                        {j}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsEditOpen(false)}
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
-                >
-                  Simpan
-                </Button>
-              </div>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+    </>
   );
 }
