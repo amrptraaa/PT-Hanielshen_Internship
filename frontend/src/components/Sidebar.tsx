@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import SettingsModal from "@/components/SettingsModal";
 import { useState } from "react";
+import Image from "next/image"; // ✅ ditambahkan
 
 export default function Sidebar() {
   const [openSettings, setOpenSettings] = useState(false);
@@ -19,8 +20,15 @@ export default function Sidebar() {
         className="h-[95vh] m-3 bg-sidebar text-sidebar-foreground shadow-xl rounded-2xl flex flex-col justify-between fixed left-0 top-0 z-50 overflow-hidden group border border-sidebar-border"
       >
         <div>
+          {/* ✅ Bagian ini diganti jadi gambar */}
           <div className="flex items-center justify-center p-4">
-            <span className="font-bold text-xl">🌿</span>
+            <Image
+              src="/logo_PT2.svg"
+              alt="Logo"
+              width={100}
+              height={100}
+              className="rounded-md"
+            />
           </div>
 
           <nav className="mt-8 flex flex-col gap-2 px-2">
@@ -30,7 +38,7 @@ export default function Sidebar() {
                 href={item.href!}
                 className={cn(
                   "flex items-center px-4 py-3 rounded-xl transition-colors",
-                  "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
               >
                 <item.icon className="h-5 w-5 shrink-0" />
