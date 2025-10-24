@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL || "http://localhost:8080";
+
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
@@ -9,11 +12,11 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
+        destination: `${API_URL}/api/:path*`,
       },
       {
         source: "/auth/:path*",
-        destination: `${process.env.NEXT_PUBLIC_AUTH_URL}/api/auth/:path*`,
+        destination: `${AUTH_URL}/api/auth/:path*`,
       },
     ];
   },

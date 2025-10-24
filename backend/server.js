@@ -1,10 +1,28 @@
 import express from "express";
 import cors from "cors";
-import usersRouter from "./routes/users.js";
+import bodyParser from "body-parser";
+import roleRoutes from "./routes/roleRoute.js";
+import userRoutes from "./routes/userRoute.js";
+import shiftRoutes from "./routes/shiftRoute.js"; 
+import jadwalRoutes from "./routes/jadwalRoute.js";
+import absensiRoutes from "./routes/absensiRoute.js";
+import fotoabsensiRoutes from "./routes/fotoabsensiRoute.js";
+
+
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-app.use("/users", usersRouter);
 
-app.listen(8080, () => console.log("Backend running on port 8080"));
+app.use(cors());
+app.use(bodyParser.json());
+
+// Routes
+app.use("/api/roles", roleRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/shifts", shiftRoutes); 
+app.use("/api/jadwal", jadwalRoutes);
+app.use("/api/absensi", absensiRoutes);
+app.use("/api/fotoabsensi", fotoabsensiRoutes);
+
+
+const PORT = 8080;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
