@@ -1,7 +1,10 @@
-export default function LoginLayout({
+// src/app/(auth)/layout.tsx
+export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="flex h-screen">{children}</div>;
+  // Kembalikan hanya wadah kosong untuk anak-anaknya.
+  // Ini mencegah layout global (dengan Sidebar/TopNav) diterapkan.
+  return <>{children}</>;
 }

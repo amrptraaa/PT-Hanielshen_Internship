@@ -1,3 +1,4 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -5,6 +6,9 @@ import Providers from "./providers";
 import Sidebar from "@/components/Sidebar";
 import ThemeWrapper from "@/components/ThemeWrapper";
 import TopNav from "@/components/TopNav";
+
+// Impor komponen client-side
+import LayoutSwitcher from "./LayoutSwitcher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,15 +35,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex`}
       >
-        <Sidebar />
-        <main className="ml-[80px] flex-1 transition-all">
-          <Providers>
-            <ThemeWrapper>
-              <TopNav />
-              <main className="px-6 mt-3">{children}</main>
-            </ThemeWrapper>
-          </Providers>
-        </main>
+        {/* Gunakan komponen client-side untuk logika tampilan */}
+        <LayoutSwitcher>{children}</LayoutSwitcher>
       </body>
     </html>
   );
