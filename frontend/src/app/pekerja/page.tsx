@@ -186,95 +186,111 @@ export default function PekerjaPage() {
     toast.success("Data berhasil diubah!");
   };
 
-  // Fungsi untuk format ID 0001, 0002 ...
   const formatId = (id: number) => id.toString().padStart(4, "0");
 
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
 
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Data Pekerja</h1>
+      <div className="p-4 sm:p-6 max-w-screen-xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Data Pekerja</h1>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#CDF463] text-black hover:bg-[#b5da55]">
-                <Plus className="mr-2 h-4 w-4" /> Create
+              <Button className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold text-base px-5 py-2.5 h-auto">
+                <Plus className="mr-2 h-5 w-5" /> Tambah Pekerja
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="max-w-lg p-6">
               <DialogHeader>
-                <DialogTitle>Tambah Pekerja Baru</DialogTitle>
+                <DialogTitle className="text-xl font-bold text-gray-800">
+                  Tambah Pekerja Baru
+                </DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-                <div>
-                  <Label>Nama</Label>
+              <form onSubmit={handleSubmit} className="space-y-6 mt-5">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Nama
+                  </Label>
                   <Input
                     name="nama"
                     value={formData.nama}
                     onChange={handleChange}
                     required
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
                   />
                 </div>
-                <div>
-                  <Label>Email</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Email
+                  </Label>
                   <Input
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
                   />
                 </div>
-                <div>
-                  <Label>Password</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Password
+                  </Label>
                   <Input
                     name="password"
                     type="password"
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
                   />
                 </div>
-                <div>
-                  <Label>No Handphone</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    No Handphone
+                  </Label>
                   <Input
                     name="nohp"
                     value={formData.nohp}
                     onChange={handleChange}
                     required
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
                   />
                 </div>
-                <div>
-                  <Label>Jabatan</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Jabatan
+                  </Label>
                   <Select
                     value={formData.jabatan}
                     onValueChange={(val) =>
                       setFormData({ ...formData, jabatan: val })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="text-base py-2.5 focus:ring-2 focus:ring-[#CDF463]">
                       <SelectValue placeholder="Pilih Jabatan" />
                     </SelectTrigger>
                     <SelectContent>
                       {jabatanOptions.map((j) => (
-                        <SelectItem key={j} value={j}>
+                        <SelectItem key={j} value={j} className="text-base">
                           {j}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex justify-end gap-2 pt-4">
+                <div className="flex justify-end gap-4 pt-3">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsCreateOpen(false)}
+                    className="px-5 py-2.5 text-base"
                   >
                     Batal
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
+                    className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold px-5 py-2.5 text-base"
                   >
                     Simpan
                   </Button>
@@ -284,83 +300,112 @@ export default function PekerjaPage() {
           </Dialog>
         </div>
 
-        <div className="rounded-md border bg-white shadow-md">
-          <Table>
-            <TableHeader>
+        <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+          <Table className="text-base">
+            <TableHeader className="bg-gray-50">
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Nama</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>No Handphone</TableHead>
-                <TableHead>Jabatan</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[90px] py-4 px-5 font-semibold text-gray-700 whitespace-nowrap">
+                  ID
+                </TableHead>
+                <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[180px]">
+                  Nama
+                </TableHead>
+                <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[220px]">
+                  Email
+                </TableHead>
+                <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[140px]">
+                  No HP
+                </TableHead>
+                <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[140px]">
+                  Jabatan
+                </TableHead>
+                <TableHead className="py-4 px-5 text-right font-semibold text-gray-700">
+                  Aksi
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {pekerja.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{formatId(row.id)}</TableCell>
-                  <TableCell>{row.nama}</TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>{row.nohp}</TableCell>
-                  <TableCell>{row.jabatan}</TableCell>
-                  <TableCell className="flex justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-blue-500 border-blue-200 hover:bg-blue-100"
-                      onClick={() => {
-                        setSelectedPekerja(row);
-                        setIsDetailOpen(true);
-                        setFormData({ ...row });
-                      }}
-                    >
-                      <Eye size={16} />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-yellow-500 border-yellow-200 hover:bg-yellow-100"
-                      onClick={() => {
-                        setSelectedPekerja(row);
-                        setFormData({ ...row });
-                        setIsEditOpen(true);
-                      }}
-                    >
-                      <Edit2 size={16} />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-500 border-red-200 hover:bg-red-100"
-                          onClick={() => setDeleteId(row.id)}
-                        >
-                          <Trash2 size={16} />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Apakah Anda yakin ingin menghapus data ini?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Data pekerja <b>{row.nama}</b> akan dihapus secara
-                            permanen.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Batal</AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-red-500 hover:bg-red-600 text-white"
-                            onClick={() => handleDelete(row.id)}
+                <TableRow key={row.id} className="hover:bg-gray-50 h-16">
+                  <TableCell className="py-4 px-5 font-mono text-gray-800">
+                    {formatId(row.id)}
+                  </TableCell>
+                  <TableCell className="py-4 px-5 font-medium text-gray-800">
+                    {row.nama}
+                  </TableCell>
+                  <TableCell className="py-4 px-5 text-gray-700 break-words">
+                    {row.email}
+                  </TableCell>
+                  <TableCell className="py-4 px-5 text-gray-700">
+                    {row.nohp}
+                  </TableCell>
+                  <TableCell className="py-4 px-5 text-gray-700 capitalize">
+                    {row.jabatan}
+                  </TableCell>
+                  <TableCell className="py-4 px-5">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-blue-600 border-blue-200 hover:bg-blue-50 h-10 w-10 p-0"
+                        onClick={() => {
+                          setSelectedPekerja(row);
+                          setIsDetailOpen(true);
+                          setFormData({ ...row });
+                        }}
+                        aria-label="Lihat detail"
+                      >
+                        <Eye size={18} />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-yellow-600 border-yellow-200 hover:bg-yellow-50 h-10 w-10 p-0"
+                        onClick={() => {
+                          setSelectedPekerja(row);
+                          setFormData({ ...row });
+                          setIsEditOpen(true);
+                        }}
+                        aria-label="Edit data"
+                      >
+                        <Edit2 size={18} />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 border-red-200 hover:bg-red-50 h-10 w-10 p-0"
+                            onClick={() => setDeleteId(row.id)}
+                            aria-label="Hapus data"
                           >
-                            Hapus
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <Trash2 size={18} />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-lg">
+                              Konfirmasi Penghapusan
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-base">
+                              Data pekerja <b>{row.nama}</b> akan dihapus secara
+                              permanen. Lanjutkan?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter className="gap-3 sm:gap-2">
+                            <AlertDialogCancel className="text-base py-2.5">
+                              Batal
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              className="bg-red-600 hover:bg-red-700 text-white text-base py-2.5"
+                              onClick={() => handleDelete(row.id)}
+                            >
+                              Hapus
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -369,29 +414,37 @@ export default function PekerjaPage() {
         </div>
 
         <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md p-6">
             <DialogHeader>
-              <DialogTitle>Detail Pekerja</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-gray-800">
+                Detail Pekerja
+              </DialogTitle>
             </DialogHeader>
             {selectedPekerja && (
-              <div className="space-y-2">
+              <div className="space-y-3 mt-3 text-base text-gray-700">
                 <p>
-                  <b>ID:</b> {formatId(selectedPekerja.id)}
+                  <span className="font-semibold">ID:</span>{" "}
+                  {formatId(selectedPekerja.id)}
                 </p>
                 <p>
-                  <b>Nama:</b> {selectedPekerja.nama}
+                  <span className="font-semibold">Nama:</span>{" "}
+                  {selectedPekerja.nama}
                 </p>
                 <p>
-                  <b>Email:</b> {selectedPekerja.email}
+                  <span className="font-semibold">Email:</span>{" "}
+                  {selectedPekerja.email}
                 </p>
                 <p>
-                  <b>Password:</b> {selectedPekerja.password}
+                  <span className="font-semibold">Password:</span>{" "}
+                  {selectedPekerja.password}
                 </p>
                 <p>
-                  <b>No HP:</b> {selectedPekerja.nohp}
+                  <span className="font-semibold">No HP:</span>{" "}
+                  {selectedPekerja.nohp}
                 </p>
                 <p>
-                  <b>Jabatan:</b> {selectedPekerja.jabatan}
+                  <span className="font-semibold">Jabatan:</span>{" "}
+                  <span className="capitalize">{selectedPekerja.jabatan}</span>
                 </p>
               </div>
             )}
@@ -399,82 +452,99 @@ export default function PekerjaPage() {
         </Dialog>
 
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg p-6">
             <DialogHeader>
-              <DialogTitle>Edit Data Pekerja</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-gray-800">
+                Edit Data Pekerja
+              </DialogTitle>
             </DialogHeader>
             {selectedPekerja && (
-              <form onSubmit={handleEdit} className="space-y-4 mt-4">
-                <div>
-                  <Label>Nama</Label>
+              <form onSubmit={handleEdit} className="space-y-6 mt-5">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Nama
+                  </Label>
                   <Input
                     name="nama"
                     value={formData.nama}
                     onChange={handleChange}
                     required
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
                   />
                 </div>
-                <div>
-                  <Label>Email</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Email
+                  </Label>
                   <Input
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
                   />
                 </div>
-                <div>
-                  <Label>Password</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Password
+                  </Label>
                   <Input
                     name="password"
                     type="password"
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
                   />
                 </div>
-                <div>
-                  <Label>No Handphone</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    No Handphone
+                  </Label>
                   <Input
                     name="nohp"
                     value={formData.nohp}
                     onChange={handleChange}
                     required
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
                   />
                 </div>
-                <div>
-                  <Label>Jabatan</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Jabatan
+                  </Label>
                   <Select
                     value={formData.jabatan}
                     onValueChange={(val) =>
                       setFormData({ ...formData, jabatan: val })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="text-base py-2.5 focus:ring-2 focus:ring-[#CDF463]">
                       <SelectValue placeholder="Pilih Jabatan" />
                     </SelectTrigger>
                     <SelectContent>
                       {jabatanOptions.map((j) => (
-                        <SelectItem key={j} value={j}>
+                        <SelectItem key={j} value={j} className="text-base">
                           {j}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex justify-end gap-2 pt-4">
+                <div className="flex justify-end gap-4 pt-3">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsEditOpen(false)}
+                    className="px-5 py-2.5 text-base"
                   >
                     Batal
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
+                    className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold px-5 py-2.5 text-base"
                   >
-                    Simpan
+                    Simpan Perubahan
                   </Button>
                 </div>
               </form>

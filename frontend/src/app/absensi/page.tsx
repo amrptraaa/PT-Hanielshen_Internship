@@ -39,7 +39,6 @@ import {
 } from "@/components/ui/select";
 
 export default function AbsensiPage() {
-  const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const [modalType, setModalType] = useState<"create" | "edit" | "view" | null>(
@@ -131,20 +130,24 @@ export default function AbsensiPage() {
   ]);
 
   const StatusBadge = ({ status }: { status: string }) => {
-    let color = "bg-gray-200 text-gray-700";
-    if (status === "Hadir") color = "bg-green-100 text-green-600";
-    if (status === "Ijin") color = "bg-yellow-100 text-yellow-600";
-    if (status === "Alpha") color = "bg-red-100 text-red-600";
-    if (status === "Terlambat") color = "bg-orange-100 text-orange-600";
+    let color = "bg-gray-100 text-gray-700";
+    if (status === "Hadir") color = "bg-green-100 text-green-700";
+    if (status === "Ijin") color = "bg-yellow-100 text-yellow-700";
+    if (status === "Alpha") color = "bg-red-100 text-red-700";
+    if (status === "Terlambat") color = "bg-orange-100 text-orange-700";
     return (
-      <span className={`px-3 py-1 rounded-md text-sm font-medium ${color}`}>
+      <span className={`px-3 py-1.5 rounded-md text-sm font-medium ${color}`}>
         {status}
       </span>
     );
   };
 
-  const handleDelete = (id: number) => {
-    setAbsensi(absensi.filter((item) => item.id !== id));
+  // ✅ DIPERBAIKI: handleDelete sekarang menggunakan deleteId dari state
+  const handleDelete = () => {
+    if (deleteId !== null) {
+      setAbsensi(absensi.filter((item) => item.id !== deleteId));
+      setDeleteId(null);
+    }
   };
 
   const [form, setForm] = useState({
@@ -173,12 +176,11 @@ export default function AbsensiPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Absensi Karyawan</h1>
-        {/* Tombol Create dikembalikan agar modal berfungsi */}
+    <div className="p-4 sm:p-6 max-w-screen-xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Absensi Karyawan</h1>
         <Button
-          className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
+          className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold text-base px-5 py-2.5 h-auto"
           onClick={() => {
             setForm({
               nama: "",
@@ -190,90 +192,118 @@ export default function AbsensiPage() {
             setModalType("create");
           }}
         >
-          <Plus className="mr-2 h-4 w-4" /> Create
+          <Plus className="mr-2 h-5 w-5" /> Tambah Absensi
         </Button>
       </div>
 
-      <div className="rounded-md border bg-white shadow-md">
-        <Table>
-          <TableHeader>
+      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+        <Table className="text-base">
+          <TableHeader className="bg-gray-50">
             <TableRow>
-              <TableHead>Nama</TableHead>
-              <TableHead>Tanggal</TableHead>
-              <TableHead>Jam Masuk</TableHead>
-              <TableHead>Jam Keluar</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[180px]">
+                Nama
+              </TableHead>
+              <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[140px]">
+                Tanggal
+              </TableHead>
+              <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[120px]">
+                Jam Masuk
+              </TableHead>
+              <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[120px]">
+                Jam Keluar
+              </TableHead>
+              <TableHead className="py-4 px-5 font-semibold text-gray-700 min-w-[120px]">
+                Status
+              </TableHead>
+              <TableHead className="py-4 px-5 text-right font-semibold text-gray-700">
+                Aksi
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {absensi.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.nama}</TableCell>
-                <TableCell>{row.tanggal}</TableCell>
-                <TableCell>{row.masuk}</TableCell>
-                <TableCell>{row.keluar}</TableCell>
-                <TableCell>
+              <TableRow key={row.id} className="hover:bg-gray-50 h-16">
+                <TableCell className="py-4 px-5 font-medium text-gray-800">
+                  {row.nama}
+                </TableCell>
+                <TableCell className="py-4 px-5 text-gray-700">
+                  {row.tanggal}
+                </TableCell>
+                <TableCell className="py-4 px-5 text-gray-700">
+                  {row.masuk}
+                </TableCell>
+                <TableCell className="py-4 px-5 text-gray-700">
+                  {row.keluar}
+                </TableCell>
+                <TableCell className="py-4 px-5">
                   <StatusBadge status={row.status} />
                 </TableCell>
-                <TableCell className="flex justify-end gap-2">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-red-500 border-red-200 hover:bg-red-100"
-                        onClick={() => setDeleteId(row.id)}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Yakin hapus data ini?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Data absensi {row.nama} tanggal {row.tanggal} akan
-                          dihapus permanen.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-red-500 hover:bg-red-600 text-white"
-                          onClick={() => handleDelete(row.id)}
+                <TableCell className="py-4 px-5">
+                  <div className="flex justify-end gap-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600 border-red-200 hover:bg-red-50 h-10 w-10 p-0"
+                          onClick={() => setDeleteId(row.id)}
+                          aria-label="Hapus data"
                         >
-                          Hapus
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                          <Trash2 size={18} />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-lg">
+                            Konfirmasi Penghapusan
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="text-base">
+                            Data absensi <b>{row.nama}</b> tanggal{" "}
+                            <b>{row.tanggal}</b> akan dihapus secara permanen.
+                            Lanjutkan?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="gap-3 sm:gap-2">
+                          <AlertDialogCancel className="text-base py-2.5">
+                            Batal
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700 text-white text-base py-2.5"
+                            onClick={handleDelete} // ✅ TANPA parameter
+                          >
+                            Hapus
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
 
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-gray-500 border-gray-200 hover:bg-gray-100"
-                    onClick={() => {
-                      setSelected(row);
-                      setModalType("view");
-                    }}
-                  >
-                    <Eye size={16} />
-                  </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-gray-600 border-gray-200 hover:bg-gray-50 h-10 w-10 p-0"
+                      onClick={() => {
+                        setSelected(row);
+                        setModalType("view");
+                      }}
+                      aria-label="Lihat detail"
+                    >
+                      <Eye size={18} />
+                    </Button>
 
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-blue-500 border-blue-200 hover:bg-blue-100"
-                    onClick={() => {
-                      setSelected(row);
-                      setForm(row);
-                      setModalType("edit");
-                    }}
-                  >
-                    <Edit2 size={16} />
-                  </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-blue-600 border-blue-200 hover:bg-blue-50 h-10 w-10 p-0"
+                      onClick={() => {
+                        setSelected(row);
+                        setForm(row);
+                        setModalType("edit");
+                      }}
+                      aria-label="Edit data"
+                    >
+                      <Edit2 size={18} />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -286,77 +316,98 @@ export default function AbsensiPage() {
         open={modalType === "create" || modalType === "edit"}
         onOpenChange={() => setModalType(null)}
       >
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg p-6">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-800">
               {modalType === "create" ? "Tambah Data Absensi" : "Edit Absensi"}
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4 mt-2">
-            <div>
-              <label className="text-sm font-medium">Nama</label>
+          <form onSubmit={handleSubmit} className="space-y-6 mt-5">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Nama</label>
               <Input
                 value={form.nama}
                 onChange={(e) => setForm({ ...form, nama: e.target.value })}
                 placeholder="Nama Karyawan"
+                className="text-base py-2.5"
               />
             </div>
-            <div>
-              <label className="text-sm font-medium">Tanggal</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Tanggal
+              </label>
               <Input
                 type="date"
                 value={form.tanggal}
                 onChange={(e) => setForm({ ...form, tanggal: e.target.value })}
+                className="text-base py-2.5"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-sm font-medium">Jam Masuk</label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Jam Masuk
+                </label>
                 <Input
                   type="time"
                   value={form.masuk}
                   onChange={(e) => setForm({ ...form, masuk: e.target.value })}
+                  className="text-base py-2.5"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium">Jam Keluar</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Jam Keluar
+                </label>
                 <Input
                   type="time"
                   value={form.keluar}
                   onChange={(e) => setForm({ ...form, keluar: e.target.value })}
+                  className="text-base py-2.5"
                 />
               </div>
             </div>
-            <div>
-              <label className="text-sm font-medium">Status</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Status
+              </label>
               <Select
                 value={form.status}
                 onValueChange={(v) => setForm({ ...form, status: v })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="text-base py-2.5">
                   <SelectValue placeholder="Pilih status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Hadir">Hadir</SelectItem>
-                  <SelectItem value="Ijin">Ijin</SelectItem>
-                  <SelectItem value="Alpha">Alpha</SelectItem>
-                  <SelectItem value="Terlambat">Terlambat</SelectItem>
+                  <SelectItem value="Hadir" className="text-base">
+                    Hadir
+                  </SelectItem>
+                  <SelectItem value="Ijin" className="text-base">
+                    Ijin
+                  </SelectItem>
+                  <SelectItem value="Alpha" className="text-base">
+                    Alpha
+                  </SelectItem>
+                  <SelectItem value="Terlambat" className="text-base">
+                    Terlambat
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <DialogFooter>
-              <Button
-                type="submit"
-                className="bg-green-500 hover:bg-green-600 text-white"
-              >
-                Simpan
-              </Button>
+            <DialogFooter className="gap-3 pt-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setModalType(null)}
+                className="px-5 py-2.5 text-base"
               >
                 Batal
+              </Button>
+              <Button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 text-base"
+              >
+                Simpan
               </Button>
             </DialogFooter>
           </form>
@@ -368,31 +419,41 @@ export default function AbsensiPage() {
         open={modalType === "view"}
         onOpenChange={() => setModalType(null)}
       >
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md p-6">
           <DialogHeader>
-            <DialogTitle>Detail Absensi</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-800">
+              Detail Absensi
+            </DialogTitle>
           </DialogHeader>
           {selected && (
-            <div className="space-y-2 mt-3">
+            <div className="space-y-3 mt-3 text-base text-gray-700">
               <p>
-                <b>Nama:</b> {selected.nama}
+                <span className="font-semibold">Nama:</span> {selected.nama}
               </p>
               <p>
-                <b>Tanggal:</b> {selected.tanggal}
+                <span className="font-semibold">Tanggal:</span>{" "}
+                {selected.tanggal}
               </p>
               <p>
-                <b>Jam Masuk:</b> {selected.masuk}
+                <span className="font-semibold">Jam Masuk:</span>{" "}
+                {selected.masuk}
               </p>
               <p>
-                <b>Jam Keluar:</b> {selected.keluar}
+                <span className="font-semibold">Jam Keluar:</span>{" "}
+                {selected.keluar}
               </p>
               <p>
-                <b>Status:</b> <StatusBadge status={selected.status} />
+                <span className="font-semibold">Status:</span>{" "}
+                <StatusBadge status={selected.status} />
               </p>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setModalType(null)}>
+          <DialogFooter className="pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setModalType(null)}
+              className="px-5 py-2.5 text-base"
+            >
               Tutup
             </Button>
           </DialogFooter>
