@@ -2,13 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import {
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandGroup,
-  CommandItem,
-} from "@/components/ui/command";
-import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -17,8 +10,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useCommandStore } from "@/store/useCommandStore";
-import { HelpCircle, LogOut, Search, User } from "lucide-react";
+import { HelpCircle, LogOut, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -26,7 +18,6 @@ import Link from "next/link";
 
 export default function TopNav() {
   const pathname = usePathname();
-  const { open, setOpen } = useCommandStore();
 
   const paths = pathname.split("/").filter(Boolean);
 
@@ -47,6 +38,7 @@ export default function TopNav() {
       )}
     >
       <div className="w-full flex items-center justify-between">
+        {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-sm font-medium">
           <span
             className="text-foreground cursor-pointer"
@@ -74,27 +66,6 @@ export default function TopNav() {
             );
           })}
         </nav>
-
-        <div className="flex-1 flex justify-center px-8">
-          <Button
-            variant="outline"
-            className="w-full max-w-md justify-start text-muted-foreground"
-            onClick={() => setOpen(true)}
-          >
-            <Search className="h-4 w-4 mr-2" />
-            Search...
-          </Button>
-
-          <CommandDialog open={open} onOpenChange={setOpen}>
-            <CommandInput placeholder="Type a command or search..." />
-            <CommandList>
-              <CommandGroup heading="Suggestions">
-                <CommandItem>Profile</CommandItem>
-                <CommandItem>Settings</CommandItem>
-              </CommandGroup>
-            </CommandList>
-          </CommandDialog>
-        </div>
 
         {/* Right - Help & Avatar */}
         <div className="flex items-center gap-4">

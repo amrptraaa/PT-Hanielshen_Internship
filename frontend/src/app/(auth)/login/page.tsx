@@ -20,43 +20,72 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Left side */}
-      <div className="w-1/2 bg-gradient-to-b from-blue-500 to-blue-700 flex flex-col justify-center items-start px-16 text-white">
-        <h1 className="text-4xl font-bold mb-2">PT HANIELSHEN</h1>
-        <p className="text-lg">Event Organizer Scheduling & Presentation App</p>
+    // ✅ Hilangkan margin default, gunakan min-h-screen + bg penuh
+    <div className="flex min-h-screen bg-[#CDF463] text-black font-sans">
+      {/* Left side - Branding */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-start px-10 sm:px-16">
+        <div className="max-w-md">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3">PT HANIELSHEN</h1>
+          <p className="text-base sm:text-lg opacity-90">
+            Event Organizer Scheduling & Presentation App
+          </p>
+        </div>
       </div>
 
-      {/* Right side */}
-      <div className="w-1/2 bg-gray-100 flex flex-col justify-center items-center">
-        <div className="w-3/4 max-w-sm">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Hello Again!
-          </h2>
-          <p className="text-gray-500 mb-6">Welcome Back</p>
+      {/* Right side - Form */}
+      <div className="w-full md:w-1/2 bg-[#f8f9fa] flex flex-col justify-center items-center p-4 sm:p-6">
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold">Hello Again!</h2>
+            <p className="opacity-80 mt-2">Silakan masuk ke akun Anda</p>
+          </div>
 
-          <form onSubmit={handleLogin} className="flex flex-col space-y-4">
-            <input
-              type="email"
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium mb-1">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Masukkan email Anda"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 text-base border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/30 focus:border-transparent bg-white"
+                autoComplete="email"
+                suppressHydrationWarning={true}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium mb-1"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Masukkan password Anda"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 text-base border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/30 focus:border-transparent bg-white"
+                autoComplete="current-password"
+              />
+            </div>
+
+            {error && (
+              <div className="text-red-700 text-sm font-medium bg-red-100 px-3 py-2 rounded-lg border border-red-300">
+                {error}
+              </div>
+            )}
 
             <button
               type="submit"
-              className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition"
+              className="w-full bg-[#CDF463] text-black font-semibold py-3 px-4 rounded-lg text-base border border-black/20 transition hover:bg-[#b5da55] shadow-sm"
             >
-              Login
+              Masuk
             </button>
           </form>
         </div>

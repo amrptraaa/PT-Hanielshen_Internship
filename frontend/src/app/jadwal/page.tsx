@@ -1,170 +1,293 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Plus, Edit2, Trash2, Search } from "lucide-react";
 
-const localizer = momentLocalizer(moment);
+type Jadwal = {
+  id: string;
+  nama: string;
+  shift: string;
+  tanggal: string;
+  jamMasuk: string;
+  jamKeluar: string;
+  task: string;
+};
 
-// Data statis pekerja EO lapangan
-const staticEvents = [
-  {
-    id: 1,
-    title: "Setup Lighting",
-    worker: "Budi Santoso",
-    task: "Instalasi lampu panggung utama",
-    start: new Date(2025, 8, 5, 8, 0),
-    end: new Date(2025, 8, 5, 12, 0),
-    duration: "4 jam",
-  },
-  {
-    id: 2,
-    title: "Dekorasi Venue",
-    worker: "Siti Aisyah",
-    task: "Penataan dekorasi & backdrop",
-    start: new Date(2025, 8, 6, 9, 0),
-    end: new Date(2025, 8, 6, 14, 0),
-    duration: "5 jam",
-  },
-  {
-    id: 3,
-    title: "Sound System Check",
-    worker: "Andi Wijaya",
-    task: "Uji coba sound system & mic",
-    start: new Date(2025, 8, 7, 10, 0),
-    end: new Date(2025, 8, 7, 12, 0),
-    duration: "2 jam",
-  },
-  {
-    id: 4,
-    title: "Logistik & Panggung",
-    worker: "Rahmat Hidayat",
-    task: "Pengangkutan alat & set panggung",
-    start: new Date(2025, 8, 8, 7, 0),
-    end: new Date(2025, 8, 8, 11, 0),
-    duration: "4 jam",
-  },
-  {
-    id: 5,
-    title: "Acara Utama (Konser)",
-    worker: "Semua Tim Lapangan",
-    task: "Pengawasan acara & koordinasi klien",
-    start: new Date(2025, 8, 13, 15, 0),
-    end: new Date(2025, 8, 13, 23, 0),
-    duration: "8 jam",
-  },
+const namaKaryawan = [
+  "Andi Saputra",
+  "Budi Santoso",
+  "Citra Dewi",
+  "Dedi Gunawan",
+  "Eka Lestari",
+  "Fajar Nugraha",
+  "Gita Pratiwi",
+  "Hendra Wijaya",
+  "Intan Marlina",
+  "Joko Setiawan",
 ];
 
-export default function SchedulePage() {
-  const [events] = useState(staticEvents);
-  const router = useRouter();
+export default function Page() {
+  const [jadwalList, setJadwalList] = useState<Jadwal[]>([]);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Jadwal | null>(null);
+  const [searchNama, setSearchNama] = useState("");
+  const [filterTanggal, setFilterTanggal] = useState("");
 
-  // Hitung analitik untuk card atas
-  const totalWorkers = new Set(events.map((e) => e.worker)).size;
-  const totalTasks = events.length;
-  const completedTasks = 3; // contoh: 3 sudah selesai
-  const completionRate = Math.round((completedTasks / totalTasks) * 100);
+  const [formData, setFormData] = useState({
+    nama: "",
+    shift: "",
+    tanggal: "",
+    jamMasuk: "",
+    jamKeluar: "",
+    task: "",
+  });
+
+  const handleSave = () => {
+    if (!formData.nama || !formData.tanggal)
+      return alert("Lengkapi semua data.");
+    if (editing) {
+      setJadwalList((prev) =>
+        prev.map((j) => (j.id === editing.id ? { ...formData, id: j.id } : j))
+      );
+      setEditing(null);
+    } else {
+      setJadwalList((prev) => [
+        ...prev,
+        { ...formData, id: crypto.randomUUID() },
+      ]);
+    }
+    setFormData({
+      nama: "",
+      shift: "",
+      tanggal: "",
+      jamMasuk: "",
+      jamKeluar: "",
+      task: "",
+    });
+    setOpen(false);
+  };
+
+  const handleEdit = (jadwal: Jadwal) => {
+    setEditing(jadwal);
+    setFormData(jadwal);
+    setOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    setJadwalList((prev) => prev.filter((j) => j.id !== id));
+  };
+
+  const filtered = jadwalList.filter(
+    (j) =>
+      (searchNama
+        ? j.nama.toLowerCase().includes(searchNama.toLowerCase())
+        : true) && (filterTanggal ? j.tanggal === filterTanggal : true)
+  );
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen grid grid-cols-4 gap-4">
-      {/* Card Utama (Analytics) */}
-      <div className="col-span-3 space-y-4">
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold text-gray-800">
-              Jadwal Pekerja
-            </CardTitle>
-            <Button
-              className="bg-black text-white hover:bg-[#CDF463] hover:text-black transition-colors"
-              onClick={() => router.push("/jadwal/create")}
+    <div className="min-h-screen bg-white p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-semibold text-gray-800">
+          Manage Jadwal Karyawan
+        </h1>
+        <Button
+          onClick={() => {
+            setOpen(true);
+            setEditing(null);
+          }}
+          className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
+        >
+          <Plus className="mr-2 h-4 w-4" /> Tambah Jadwal
+        </Button>
+      </div>
+
+      {/* Filter Section */}
+      <div className="flex flex-wrap gap-4 mb-8 items-center">
+        <div className="relative w-full sm:w-[300px]">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Cari nama karyawan..."
+            className="pl-9 border-blue-300 focus:ring-2 focus:ring-blue-500"
+            value={searchNama}
+            onChange={(e) => setSearchNama(e.target.value)}
+          />
+        </div>
+
+        <Input
+          type="date"
+          className="w-full sm:w-[200px] border-blue-300 focus:ring-2 focus:ring-blue-500"
+          value={filterTanggal}
+          onChange={(e) => setFilterTanggal(e.target.value)}
+        />
+      </div>
+
+      {/* Card Grid */}
+      {filtered.length === 0 ? (
+        <p className="text-center text-gray-500">Belum ada jadwal.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {filtered.map((j) => (
+            <Card
+              key={j.id}
+              className="border border-blue-100 shadow-md hover:shadow-lg transition-all rounded-2xl"
             >
-              + Create Jadwal
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-gray-500">Total Pekerja</p>
-                <p className="text-2xl font-bold text-orange-500">
-                  {totalWorkers}
+              <CardHeader className="pb-2">
+                <CardTitle className="text-blue-700">{j.nama}</CardTitle>
+                <p className="text-sm text-gray-500">
+                  {j.shift} • {j.tanggal}
                 </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Jumlah Task</p>
-                <p className="text-2xl font-bold text-blue-500">{totalTasks}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Penyelesaian</p>
-                <p className="text-2xl font-bold text-green-500">
-                  {completionRate}%
+              </CardHeader>
+              <CardContent className="space-y-1 text-sm text-gray-700">
+                <p>
+                  <span className="font-semibold">Jam Masuk:</span> {j.jamMasuk}
                 </p>
+                <p>
+                  <span className="font-semibold">Jam Keluar:</span>{" "}
+                  {j.jamKeluar}
+                </p>
+                <p>
+                  <span className="font-semibold">Task:</span> {j.task}
+                </p>
+
+                <div className="flex justify-end gap-2 pt-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(j)}
+                    className="hover:bg-blue-50"
+                  >
+                    <Edit2 className="h-4 w-4 text-blue-600" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDelete(j.id)}
+                    className="hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4 text-red-600" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Dialog Form */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-lg p-6 rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-blue-700 text-lg">
+              {editing ? "Edit Jadwal" : "Tambah Jadwal"}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-5 py-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <Label className="text-sm text-gray-600">Nama Karyawan</Label>
+                <Input
+                  list="nama-karyawan"
+                  placeholder="Cari nama karyawan..."
+                  value={formData.nama}
+                  onChange={(e) =>
+                    setFormData({ ...formData, nama: e.target.value })
+                  }
+                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                />
+                <datalist id="nama-karyawan">
+                  {namaKaryawan.map((n) => (
+                    <option key={n} value={n} />
+                  ))}
+                </datalist>
+              </div>
+
+              <div>
+                <Label className="text-sm text-gray-600">Shift</Label>
+                <Input
+                  placeholder="Contoh: Pagi / Sore"
+                  value={formData.shift}
+                  onChange={(e) =>
+                    setFormData({ ...formData, shift: e.target.value })
+                  }
+                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <Label className="text-sm text-gray-600">Tanggal</Label>
+                <Input
+                  type="date"
+                  value={formData.tanggal}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tanggal: e.target.value })
+                  }
+                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <Label className="text-sm text-gray-600">Jam Masuk</Label>
+                  <Input
+                    type="time"
+                    value={formData.jamMasuk}
+                    onChange={(e) =>
+                      setFormData({ ...formData, jamMasuk: e.target.value })
+                    }
+                    className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="w-1/2">
+                  <Label className="text-sm text-gray-600">Jam Keluar</Label>
+                  <Input
+                    type="time"
+                    value={formData.jamKeluar}
+                    onChange={(e) =>
+                      setFormData({ ...formData, jamKeluar: e.target.value })
+                    }
+                    className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="md:col-span-2">
+                <Label className="text-sm text-gray-600">Task</Label>
+                <Input
+                  placeholder="Masukkan deskripsi tugas..."
+                  value={formData.task}
+                  onChange={(e) =>
+                    setFormData({ ...formData, task: e.target.value })
+                  }
+                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Kalender */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold text-gray-800">
-              Kalender Jadwal EO
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Calendar
-              localizer={localizer}
-              events={events}
-              startAccessor="start"
-              endAccessor="end"
-              style={{ height: 600 }}
-              views={["month", "week", "day"]}
-              popup
-              onSelectEvent={(event) =>
-                router.push(`/jadwal/${event.id}/detail`)
-              }
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Card Samping */}
-      <div className="col-span-1 space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>At Work</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {events.map((event) => (
-                <li
-                  key={event.id}
-                  className="px-2 py-1 bg-blue-100 text-blue-700 rounded cursor-pointer hover:bg-blue-200"
-                  onClick={() => router.push(`/jadwal/${event.id}/detail`)}
-                >
-                  {event.title} - {event.worker}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Task Info</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600">
-              Setiap jadwal berisi informasi tentang nama pekerja, deskripsi
-              tugas, serta estimasi durasi pengerjaan. Klik pada kalender atau
-              daftar "At Work" untuk melihat detail jadwal secara lengkap.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          <DialogFooter>
+            <Button
+              onClick={handleSave}
+              className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold"
+            >
+              {editing ? "Simpan Perubahan" : "Tambah Jadwal"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
