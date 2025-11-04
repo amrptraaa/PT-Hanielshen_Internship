@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -40,94 +40,29 @@ import {
 
 export default function AbsensiPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
-
-  const [modalType, setModalType] = useState<"create" | "edit" | "view" | null>(
-    null
-  );
+  const [modalType, setModalType] = useState<"create" | "edit" | "view" | null>(null);
   const [selected, setSelected] = useState<any>(null);
+  const [absensi, setAbsensi] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [absensi, setAbsensi] = useState([
-    {
-      id: 1,
-      nama: "Andi Saputra",
-      tanggal: "2025-10-24",
-      masuk: "08:00",
-      keluar: "17:00",
-      status: "Hadir",
-    },
-    {
-      id: 2,
-      nama: "Budi Santoso",
-      tanggal: "2025-10-24",
-      masuk: "08:10",
-      keluar: "17:00",
-      status: "Hadir",
-    },
-    {
-      id: 3,
-      nama: "Citra Dewi",
-      tanggal: "2025-10-24",
-      masuk: "08:30",
-      keluar: "17:05",
-      status: "Terlambat",
-    },
-    {
-      id: 4,
-      nama: "Dedi Gunawan",
-      tanggal: "2025-10-24",
-      masuk: "07:55",
-      keluar: "16:59",
-      status: "Hadir",
-    },
-    {
-      id: 5,
-      nama: "Eka Lestari",
-      tanggal: "2025-10-24",
-      masuk: "08:05",
-      keluar: "17:10",
-      status: "Hadir",
-    },
-    {
-      id: 6,
-      nama: "Fajar Nugraha",
-      tanggal: "2025-10-24",
-      masuk: "08:20",
-      keluar: "17:15",
-      status: "Terlambat",
-    },
-    {
-      id: 7,
-      nama: "Gita Pratiwi",
-      tanggal: "2025-10-24",
-      masuk: "08:00",
-      keluar: "16:58",
-      status: "Hadir",
-    },
-    {
-      id: 8,
-      nama: "Hendra Wijaya",
-      tanggal: "2025-10-24",
-      masuk: "08:12",
-      keluar: "17:00",
-      status: "Hadir",
-    },
-    {
-      id: 9,
-      nama: "Intan Marlina",
-      tanggal: "2025-10-24",
-      masuk: "08:25",
-      keluar: "17:05",
-      status: "Terlambat",
-    },
-    {
-      id: 10,
-      nama: "Joko Setiawan",
-      tanggal: "2025-10-24",
-      masuk: "07:59",
-      keluar: "17:01",
-      status: "Hadir",
-    },
-  ]);
+  // ✅ FETCH DATA dari backend (jalankan sekali saat halaman dimuat)
+  useEffect(() => {
+  fetch("http://localhost:8080/api/absensi")
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Response absensi dari backend:", data);
+      // Kalau data langsung array → pakai langsung
+      // Kalau data di dalam objek (misalnya data.data) → ambil isinya
+      const list = Array.isArray(data) ? data : data.data || [];
+      setAbsensi(list);
+    })
+    .catch((err) => {
+      console.error("Error fetching absensi:", err);
+      setAbsensi([]);
+    })
+    .finally(() => setLoading(false));
+}, []);
+
 
   const StatusBadge = ({ status }: { status: string }) => {
     let color = "bg-gray-100 text-gray-700";
@@ -142,11 +77,17 @@ export default function AbsensiPage() {
     );
   };
 
-  // ✅ DIPERBAIKI: handleDelete sekarang menggunakan deleteId dari state
+  // ✅ Hapus data (langsung update state, bisa disesuaikan dengan API DELETE)
   const handleDelete = () => {
     if (deleteId !== null) {
-      setAbsensi(absensi.filter((item) => item.id !== deleteId));
-      setDeleteId(null);
+      fetch(`http://localhost:8080/api/absensi/${deleteId}`, {
+        method: "DELETE",
+      })
+        .then(() => {
+          setAbsensi(absensi.filter((item) => item.id !== deleteId));
+          setDeleteId(null);
+        })
+        .catch((err) => console.error("Error deleting absensi:", err));
     }
   };
 
@@ -158,22 +99,45 @@ export default function AbsensiPage() {
     status: "",
   });
 
+  // ✅ Tambah / Edit data (POST atau PUT ke backend)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (modalType === "create") {
-      const newItem = {
-        id: absensi.length + 1,
-        ...form,
-      };
-      setAbsensi([...absensi, newItem]);
+      fetch("http://localhost:8080/api/absensi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+        .then((res) => res.json())
+        .then((newItem) => {
+          setAbsensi([...absensi, newItem]);
+          setModalType(null);
+        })
+        .catch((err) => console.error("Error creating absensi:", err));
     } else if (modalType === "edit" && selected) {
-      const updated = absensi.map((item) =>
-        item.id === selected.id ? { ...item, ...form } : item
-      );
-      setAbsensi(updated);
+      fetch(`http://localhost:8080/api/absensi/${selected.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+        .then((res) => res.json())
+        .then((updated) => {
+          const newData = absensi.map((item) =>
+            item.id === updated.id ? updated : item
+          );
+          setAbsensi(newData);
+          setModalType(null);
+        })
+        .catch((err) => console.error("Error updating absensi:", err));
     }
-    setModalType(null);
   };
+
+  if (loading) {
+    return (
+      <div className="p-6 text-lg font-medium">Memuat data absensi...</div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 max-w-screen-xl mx-auto">
@@ -269,7 +233,7 @@ export default function AbsensiPage() {
                           </AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-red-600 hover:bg-red-700 text-white text-base py-2.5"
-                            onClick={handleDelete} // ✅ TANPA parameter
+                            onClick={handleDelete}
                           >
                             Hapus
                           </AlertDialogAction>
@@ -415,10 +379,7 @@ export default function AbsensiPage() {
       </Dialog>
 
       {/* Modal View */}
-      <Dialog
-        open={modalType === "view"}
-        onOpenChange={() => setModalType(null)}
-      >
+      <Dialog open={modalType === "view"} onOpenChange={() => setModalType(null)}>
         <DialogContent className="max-w-md p-6">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-800">
@@ -431,16 +392,13 @@ export default function AbsensiPage() {
                 <span className="font-semibold">Nama:</span> {selected.nama}
               </p>
               <p>
-                <span className="font-semibold">Tanggal:</span>{" "}
-                {selected.tanggal}
+                <span className="font-semibold">Tanggal:</span> {selected.tanggal}
               </p>
               <p>
-                <span className="font-semibold">Jam Masuk:</span>{" "}
-                {selected.masuk}
+                <span className="font-semibold">Jam Masuk:</span> {selected.masuk}
               </p>
               <p>
-                <span className="font-semibold">Jam Keluar:</span>{" "}
-                {selected.keluar}
+                <span className="font-semibold">Jam Keluar:</span> {selected.keluar}
               </p>
               <p>
                 <span className="font-semibold">Status:</span>{" "}
