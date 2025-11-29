@@ -119,7 +119,7 @@ export default function Page() {
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Cari nama karyawan..."
-            className="pl-9 border-blue-300 focus:ring-2 focus:ring-blue-500"
+            className="pl-9 border-[#039155] focus:ring-2 focus:ring-[#039155]"
             value={searchNama}
             onChange={(e) => setSearchNama(e.target.value)}
           />
@@ -127,7 +127,7 @@ export default function Page() {
 
         <Input
           type="date"
-          className="w-full sm:w-[200px] border-blue-300 focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-[200px] border-[#039155] focus:ring-2 focus:ring-[#039155]"
           value={filterTanggal}
           onChange={(e) => setFilterTanggal(e.target.value)}
         />
@@ -189,7 +189,7 @@ export default function Page() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg p-6 rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-blue-700 text-lg">
+            <DialogTitle className="text-[#039155] text-lg">
               {editing ? "Edit Jadwal" : "Tambah Jadwal"}
             </DialogTitle>
           </DialogHeader>
@@ -205,7 +205,7 @@ export default function Page() {
                   onChange={(e) =>
                     setFormData({ ...formData, nama: e.target.value })
                   }
-                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                 />
                 <datalist id="nama-karyawan">
                   {namaKaryawan.map((n) => (
@@ -222,7 +222,7 @@ export default function Page() {
                   onChange={(e) =>
                     setFormData({ ...formData, shift: e.target.value })
                   }
-                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                 />
               </div>
 
@@ -234,7 +234,7 @@ export default function Page() {
                   onChange={(e) =>
                     setFormData({ ...formData, tanggal: e.target.value })
                   }
-                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                 />
               </div>
 
@@ -247,7 +247,7 @@ export default function Page() {
                     onChange={(e) =>
                       setFormData({ ...formData, jamMasuk: e.target.value })
                     }
-                    className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                    className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                   />
                 </div>
 
@@ -259,7 +259,7 @@ export default function Page() {
                     onChange={(e) =>
                       setFormData({ ...formData, jamKeluar: e.target.value })
                     }
-                    className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                    className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                   />
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function Page() {
                   onChange={(e) =>
                     setFormData({ ...formData, task: e.target.value })
                   }
-                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                 />
               </div>
             </div>
