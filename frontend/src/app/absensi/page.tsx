@@ -40,29 +40,30 @@ import {
 
 export default function AbsensiPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [modalType, setModalType] = useState<"create" | "edit" | "view" | null>(null);
+  const [modalType, setModalType] = useState<"create" | "edit" | "view" | null>(
+    null
+  );
   const [selected, setSelected] = useState<any>(null);
   const [absensi, setAbsensi] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // ✅ FETCH DATA dari backend (jalankan sekali saat halaman dimuat)
   useEffect(() => {
-  fetch("http://localhost:8080/api/absensi")
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("Response absensi dari backend:", data);
-      // Kalau data langsung array → pakai langsung
-      // Kalau data di dalam objek (misalnya data.data) → ambil isinya
-      const list = Array.isArray(data) ? data : data.data || [];
-      setAbsensi(list);
-    })
-    .catch((err) => {
-      console.error("Error fetching absensi:", err);
-      setAbsensi([]);
-    })
-    .finally(() => setLoading(false));
-}, []);
-
+    fetch("http://localhost:8080/api/absensi")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Response absensi dari backend:", data);
+        // Kalau data langsung array → pakai langsung
+        // Kalau data di dalam objek (misalnya data.data) → ambil isinya
+        const list = Array.isArray(data) ? data : data.data || [];
+        setAbsensi(list);
+      })
+      .catch((err) => {
+        console.error("Error fetching absensi:", err);
+        setAbsensi([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const StatusBadge = ({ status }: { status: string }) => {
     let color = "bg-gray-100 text-gray-700";
@@ -144,7 +145,7 @@ export default function AbsensiPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Absensi Karyawan</h1>
         <Button
-          className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold text-base px-5 py-2.5 h-auto"
+          className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771] font-semibold text-base px-5 py-2.5 h-auto"
           onClick={() => {
             setForm({
               nama: "",
@@ -369,7 +370,7 @@ export default function AbsensiPage() {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 text-base"
+                className="bg-[#039155] hover:bg-[#28A771] text-[#FFFEFD] font-semibold px-5 py-2.5 text-base"
               >
                 Simpan
               </Button>
@@ -379,7 +380,10 @@ export default function AbsensiPage() {
       </Dialog>
 
       {/* Modal View */}
-      <Dialog open={modalType === "view"} onOpenChange={() => setModalType(null)}>
+      <Dialog
+        open={modalType === "view"}
+        onOpenChange={() => setModalType(null)}
+      >
         <DialogContent className="max-w-md p-6">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-800">
@@ -392,13 +396,16 @@ export default function AbsensiPage() {
                 <span className="font-semibold">Nama:</span> {selected.nama}
               </p>
               <p>
-                <span className="font-semibold">Tanggal:</span> {selected.tanggal}
+                <span className="font-semibold">Tanggal:</span>{" "}
+                {selected.tanggal}
               </p>
               <p>
-                <span className="font-semibold">Jam Masuk:</span> {selected.masuk}
+                <span className="font-semibold">Jam Masuk:</span>{" "}
+                {selected.masuk}
               </p>
               <p>
-                <span className="font-semibold">Jam Keluar:</span> {selected.keluar}
+                <span className="font-semibold">Jam Keluar:</span>{" "}
+                {selected.keluar}
               </p>
               <p>
                 <span className="font-semibold">Status:</span>{" "}

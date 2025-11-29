@@ -197,7 +197,7 @@ export default function PekerjaPage() {
           <h1 className="text-2xl font-bold text-gray-800">Data Pekerja</h1>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold text-base px-5 py-2.5 h-auto">
+              <Button className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771] font-semibold text-base px-5 py-2.5 h-auto">
                 <Plus className="mr-2 h-5 w-5" /> Tambah Pekerja
               </Button>
             </DialogTrigger>
@@ -217,7 +217,7 @@ export default function PekerjaPage() {
                     value={formData.nama}
                     onChange={handleChange}
                     required
-                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#039155]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -229,7 +229,7 @@ export default function PekerjaPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#039155]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -242,7 +242,7 @@ export default function PekerjaPage() {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#039155]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -254,7 +254,7 @@ export default function PekerjaPage() {
                     value={formData.nohp}
                     onChange={handleChange}
                     required
-                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#039155]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -267,7 +267,7 @@ export default function PekerjaPage() {
                       setFormData({ ...formData, jabatan: val })
                     }
                   >
-                    <SelectTrigger className="text-base py-2.5 focus:ring-2 focus:ring-[#CDF463]">
+                    <SelectTrigger className="text-base py-2.5 focus:ring-2 focus:ring-[#039155]">
                       <SelectValue placeholder="Pilih Jabatan" />
                     </SelectTrigger>
                     <SelectContent>
@@ -290,7 +290,7 @@ export default function PekerjaPage() {
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold px-5 py-2.5 text-base"
+                    className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771] font-semibold px-5 py-2.5 text-base"
                   >
                     Simpan
                   </Button>
@@ -469,7 +469,7 @@ export default function PekerjaPage() {
                     value={formData.nama}
                     onChange={handleChange}
                     required
-                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#039155]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -481,7 +481,7 @@ export default function PekerjaPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#039155]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -494,7 +494,7 @@ export default function PekerjaPage() {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#039155]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -506,7 +506,7 @@ export default function PekerjaPage() {
                     value={formData.nohp}
                     onChange={handleChange}
                     required
-                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#CDF463]"
+                    className="text-base py-2.5 focus-visible:ring-2 focus-visible:ring-[#039155]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -519,7 +519,7 @@ export default function PekerjaPage() {
                       setFormData({ ...formData, jabatan: val })
                     }
                   >
-                    <SelectTrigger className="text-base py-2.5 focus:ring-2 focus:ring-[#CDF463]">
+                    <SelectTrigger className="text-base py-2.5 focus:ring-2 focus:ring-[#039155]">
                       <SelectValue placeholder="Pilih Jabatan" />
                     </SelectTrigger>
                     <SelectContent>
@@ -542,7 +542,7 @@ export default function PekerjaPage() {
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold px-5 py-2.5 text-base"
+                    className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771] font-semibold px-5 py-2.5 text-base"
                   >
                     Simpan Perubahan
                   </Button>

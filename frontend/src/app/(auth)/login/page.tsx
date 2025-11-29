@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   return (
     // ✅ Hilangkan margin default, gunakan min-h-screen + bg penuh
-    <div className="flex min-h-screen bg-[#CDF463] text-black font-sans">
+    <div className="flex h-full bg-[#039155] text-black font-sans">
       {/* Left side - Branding */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-start px-10 sm:px-16">
         <div className="max-w-md">
@@ -83,7 +83,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full bg-[#CDF463] text-black font-semibold py-3 px-4 rounded-lg text-base border border-black/20 transition hover:bg-[#b5da55] shadow-sm"
+              className="w-full bg-[#039155] text-black font-semibold py-3 px-4 rounded-lg text-base border border-black/20 transition hover:bg-[#28A771] shadow-sm"
             >
               Masuk
             </button>

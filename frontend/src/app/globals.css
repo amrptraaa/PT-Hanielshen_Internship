@@ -43,6 +43,24 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Reset CSS untuk menghindari margin/padding default */
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Pastikan tidak ada margin dari elemen root Next.js */
+#__next {
+  height: 100%;
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -171,6 +189,11 @@
 }
 
 @layer base {
+  html,
+  body {
+    @apply m-0 p-0;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

@@ -107,7 +107,7 @@ export default function Page() {
             setOpen(true);
             setEditing(null);
           }}
-          className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
+          className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771]"
         >
           <Plus className="mr-2 h-4 w-4" /> Tambah Jadwal
         </Button>
@@ -281,7 +281,7 @@ export default function Page() {
           <DialogFooter>
             <Button
               onClick={handleSave}
-              className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold"
+              className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771] font-semibold"
             >
               {editing ? "Simpan Perubahan" : "Tambah Jadwal"}
             </Button>
