@@ -1,4 +1,5 @@
-import { db } from "../db/index.js";
+import pool from "../database/index.js";
+
 
 export async function getAllShifts() {
   const [rows] = await pool.query("SELECT * FROM shift ORDER BY id DESC");
