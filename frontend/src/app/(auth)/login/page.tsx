@@ -36,7 +36,7 @@ export default function LoginPage() {
       <div className="w-full md:w-1/2 bg-[#f8f9fa] flex flex-col justify-center items-center p-4 sm:p-6">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold">Hello Again!</h2>
+            <h2 className="text-2xl font-bold">Selamat Datang!</h2>
             <p className="opacity-80 mt-2">Silakan masuk ke akun Anda</p>
           </div>
 

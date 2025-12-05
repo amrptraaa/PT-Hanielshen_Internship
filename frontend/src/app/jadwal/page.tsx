@@ -144,7 +144,7 @@ export default function Page() {
               className="border border-blue-100 shadow-md hover:shadow-lg transition-all rounded-2xl"
             >
               <CardHeader className="pb-2">
-                <CardTitle className="text-blue-700">{j.nama}</CardTitle>
+                <CardTitle className="text-[#039155]">{j.nama}</CardTitle>
                 <p className="text-sm text-gray-500">
                   {j.shift} • {j.tanggal}
                 </p>
@@ -168,7 +168,7 @@ export default function Page() {
                     onClick={() => handleEdit(j)}
                     className="hover:bg-blue-50"
                   >
-                    <Edit2 className="h-4 w-4 text-blue-600" />
+                    <Edit2 className="h-4 w-4 text-[#039155]" />
                   </Button>
                   <Button
                     variant="outline"

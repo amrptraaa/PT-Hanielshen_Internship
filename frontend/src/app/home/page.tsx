@@ -14,6 +14,7 @@ import {
   LineChart,
   Line,
   Legend,
+  CartesianGrid,
 } from "recharts";
 import AnimatedContent from "@/components/AnimatedContent";
 
@@ -139,12 +140,50 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={schedulePerMonth}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip contentStyle={{ borderRadius: 8 }} />
-                  <Legend />
-                  <Bar dataKey="jadwal" fill="#039155" radius={[8, 8, 0, 0]} />
+                <BarChart
+                  data={schedulePerMonth}
+                  barGap={6}
+                  barCategoryGap={20}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fill: "#6b7280", fontSize: 12 }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+
+                  <YAxis
+                    tick={{ fill: "#6b7280", fontSize: 12 }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+
+                  <Tooltip
+                    cursor={{ fill: "rgba(0,0,0,0.05)" }}
+                    contentStyle={{
+                      borderRadius: 10,
+                      border: "1px solid #e5e7eb",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                    }}
+                  />
+
+                  <Legend
+                    verticalAlign="bottom"
+                    align="center"
+                    iconType="circle"
+                    formatter={() => "Jumlah Jadwal Bulanan"}
+                  />
+
+                  <Bar
+                    dataKey="jadwal"
+                    fill="#039155"
+                    radius={[8, 8, 0, 0]}
+                    background={{
+                      fill: "#f3f4f6",
+                    }}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -160,7 +199,14 @@ export default function DashboardPage() {
                 <LineChart data={attendanceTrend}>
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip contentStyle={{ borderRadius: 8 }} />
+                  <Tooltip
+                    cursor={{ fill: "rgba(0,0,0,0.05)" }}
+                    contentStyle={{
+                      borderRadius: 10,
+                      border: "1px solid #e5e7eb",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                    }}
+                  />
                   <Legend />
                   <Line
                     type="monotone"
