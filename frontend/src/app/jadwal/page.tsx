@@ -107,7 +107,7 @@ export default function Page() {
             setOpen(true);
             setEditing(null);
           }}
-          className="bg-[#CDF463] text-black hover:bg-[#b5da55]"
+          className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771]"
         >
           <Plus className="mr-2 h-4 w-4" /> Tambah Jadwal
         </Button>
@@ -119,7 +119,7 @@ export default function Page() {
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Cari nama karyawan..."
-            className="pl-9 border-blue-300 focus:ring-2 focus:ring-blue-500"
+            className="pl-9 border-[#039155] focus:ring-2 focus:ring-[#039155]"
             value={searchNama}
             onChange={(e) => setSearchNama(e.target.value)}
           />
@@ -127,7 +127,7 @@ export default function Page() {
 
         <Input
           type="date"
-          className="w-full sm:w-[200px] border-blue-300 focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-[200px] border-[#039155] focus:ring-2 focus:ring-[#039155]"
           value={filterTanggal}
           onChange={(e) => setFilterTanggal(e.target.value)}
         />
@@ -144,7 +144,7 @@ export default function Page() {
               className="border border-blue-100 shadow-md hover:shadow-lg transition-all rounded-2xl"
             >
               <CardHeader className="pb-2">
-                <CardTitle className="text-blue-700">{j.nama}</CardTitle>
+                <CardTitle className="text-[#039155]">{j.nama}</CardTitle>
                 <p className="text-sm text-gray-500">
                   {j.shift} • {j.tanggal}
                 </p>
@@ -168,7 +168,7 @@ export default function Page() {
                     onClick={() => handleEdit(j)}
                     className="hover:bg-blue-50"
                   >
-                    <Edit2 className="h-4 w-4 text-blue-600" />
+                    <Edit2 className="h-4 w-4 text-[#039155]" />
                   </Button>
                   <Button
                     variant="outline"
@@ -189,7 +189,7 @@ export default function Page() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg p-6 rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-blue-700 text-lg">
+            <DialogTitle className="text-[#039155] text-lg">
               {editing ? "Edit Jadwal" : "Tambah Jadwal"}
             </DialogTitle>
           </DialogHeader>
@@ -205,7 +205,7 @@ export default function Page() {
                   onChange={(e) =>
                     setFormData({ ...formData, nama: e.target.value })
                   }
-                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                 />
                 <datalist id="nama-karyawan">
                   {namaKaryawan.map((n) => (
@@ -222,7 +222,7 @@ export default function Page() {
                   onChange={(e) =>
                     setFormData({ ...formData, shift: e.target.value })
                   }
-                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                 />
               </div>
 
@@ -234,7 +234,7 @@ export default function Page() {
                   onChange={(e) =>
                     setFormData({ ...formData, tanggal: e.target.value })
                   }
-                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                 />
               </div>
 
@@ -247,7 +247,7 @@ export default function Page() {
                     onChange={(e) =>
                       setFormData({ ...formData, jamMasuk: e.target.value })
                     }
-                    className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                    className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                   />
                 </div>
 
@@ -259,7 +259,7 @@ export default function Page() {
                     onChange={(e) =>
                       setFormData({ ...formData, jamKeluar: e.target.value })
                     }
-                    className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                    className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                   />
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function Page() {
                   onChange={(e) =>
                     setFormData({ ...formData, task: e.target.value })
                   }
-                  className="border-blue-300 focus:ring-2 focus:ring-blue-500"
+                  className="border-[#039155] focus:ring-2 focus:ring-[#039155]"
                 />
               </div>
             </div>
@@ -281,7 +281,7 @@ export default function Page() {
           <DialogFooter>
             <Button
               onClick={handleSave}
-              className="bg-[#CDF463] text-black hover:bg-[#b5da55] font-semibold"
+              className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771] font-semibold"
             >
               {editing ? "Simpan Perubahan" : "Tambah Jadwal"}
             </Button>

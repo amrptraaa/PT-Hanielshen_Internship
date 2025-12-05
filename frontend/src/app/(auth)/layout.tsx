@@ -4,7 +4,7 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Kembalikan hanya wadah kosong untuk anak-anaknya.
-  // Ini mencegah layout global (dengan Sidebar/TopNav) diterapkan.
-  return <>{children}</>;
+  return (
+    <div className="m-0 p-0 h-screen w-screen bg-[#CDF463]">{children}</div>
+  );
 }
