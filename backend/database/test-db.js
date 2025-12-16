@@ -1,12 +1,10 @@
-import { pool } from "./config/db.js";
+import pool from "./index.js";
 
-const test = async () => {
-  try {
-    const [rows] = await pool.query("SELECT 1");
-    console.log("DB Connected:", rows);
-  } catch (err) {
-    console.error("DB Error:", err);
-  }
-};
-
-test();
+try {
+  const [rows] = await pool.query("SELECT 1");
+  console.log("✅ DB CONNECTED:", rows);
+  process.exit(0);
+} catch (err) {
+  console.error("❌ DB ERROR:", err.message);
+  process.exit(1);
+}
