@@ -1,4 +1,5 @@
-import { db } from "../db/index.js";
+import pool from "../database/index.js";
+
 
 // Ambil semua foto absensi
 export async function getAllFotoAbsensi() {

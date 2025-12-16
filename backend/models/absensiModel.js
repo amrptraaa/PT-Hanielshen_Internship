@@ -1,4 +1,5 @@
-import { db } from "../db/index.js";
+import pool from "../database/index.js";
+
 
 export async function getAllAbsensi() {
   const [rows] = await pool.query(`
