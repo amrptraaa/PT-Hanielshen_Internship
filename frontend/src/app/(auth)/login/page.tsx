@@ -5,34 +5,63 @@ import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    if (email === "admin@hanielshen.id" && password === "admin123") {
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Login gagal");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ Simpan token (localStorage)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // ✅ Redirect setelah login
       router.push("/home");
-    } else {
-      setError("Email atau password salah");
+    } catch (err) {
+      console.error(err);
+      setError("Tidak dapat terhubung ke server");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    // ✅ Hilangkan margin default, gunakan min-h-screen + bg penuh
     <div className="flex h-full bg-[#039155] text-black font-sans">
-      {/* Left side - Branding */}
+      {/* Left */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-start px-10 sm:px-16">
         <div className="max-w-md">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">PT HANIELSHEN</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3">
+            PT HANIELSHEN
+          </h1>
           <p className="text-base sm:text-lg opacity-90">
             Event Organizer Scheduling & Presentation App
           </p>
         </div>
       </div>
 
-      {/* Right side - Form */}
+      {/* Right */}
       <div className="w-full md:w-1/2 bg-[#f8f9fa] flex flex-col justify-center items-center p-4 sm:p-6">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
@@ -41,51 +70,46 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
+            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1">
-                Email
-              </label>
+              <label className="block text-sm font-medium mb-1">Email</label>
               <input
-                id="email"
                 type="email"
-                placeholder="Masukkan email Anda"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 text-base border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/30 focus:border-transparent bg-white"
-                autoComplete="email"
-                suppressHydrationWarning={true}
+                required
+                className="w-full px-4 py-3 border rounded-lg"
               />
             </div>
 
+            {/* Password */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium mb-1"
-              >
+              <label className="block text-sm font-medium mb-1">
                 Password
               </label>
               <input
-                id="password"
                 type="password"
-                placeholder="Masukkan password Anda"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 text-base border border-black/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/30 focus:border-transparent bg-white"
-                autoComplete="current-password"
+                required
+                className="w-full px-4 py-3 border rounded-lg"
               />
             </div>
 
+            {/* Error */}
             {error && (
-              <div className="text-red-700 text-sm font-medium bg-red-100 px-3 py-2 rounded-lg border border-red-300">
+              <div className="text-red-700 bg-red-100 px-3 py-2 rounded">
                 {error}
               </div>
             )}
 
+            {/* Button */}
             <button
               type="submit"
-              className="w-full bg-[#039155] text-black font-semibold py-3 px-4 rounded-lg text-base border border-black/20 transition hover:bg-[#28A771] shadow-sm"
+              disabled={loading}
+              className="w-full bg-[#039155] py-3 rounded-lg font-semibold hover:bg-[#28A771]"
             >
-              Masuk
+              {loading ? "Memproses..." : "Masuk"}
             </button>
           </form>
         </div>

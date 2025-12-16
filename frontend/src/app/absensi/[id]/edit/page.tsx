@@ -1,178 +1,152 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export default function AbsensiEditPage() {
   const { id } = useParams();
   const router = useRouter();
 
-  // Data statis absensi
-  const absensi = [
-    {
-      id: 1,
-      nama: "N. Karyawan",
-      tanggal: "2025-01-01",
-      masuk: "08:00",
-      keluar: "17:00",
-      status: "Hadir",
-    },
-    {
-      id: 2,
-      nama: "N. Karyawan",
-      tanggal: "2025-01-02",
-      masuk: "08:00",
-      keluar: "17:00",
-      status: "Hadir",
-    },
-    {
-      id: 3,
-      nama: "N. Karyawan",
-      tanggal: "2025-01-03",
-      masuk: "08:00",
-      keluar: "17:00",
-      status: "Ijin",
-    },
-    {
-      id: 4,
-      nama: "N. Karyawan",
-      tanggal: "2025-01-04",
-      masuk: "08:00",
-      keluar: "17:00",
-      status: "Alpha",
-    },
-  ];
-
-  const data = absensi.find((row) => row.id === Number(id));
-
-  const [form, setForm] = useState({
-    nama: data?.nama || "",
-    tanggal: data?.tanggal || "",
-    masuk: data?.masuk || "",
-    keluar: data?.keluar || "",
-    status: data?.status || "Hadir",
+  const [formData, setFormData] = useState({
+    tanggal: "",
+    jam_masuk: "",
+    jam_keluar: "",
+    status: "Hadir",
   });
 
-  if (!data) {
-    return (
-      <div className="p-6">
-        <h1 className="text-xl font-semibold">Data tidak ditemukan</h1>
-      </div>
-    );
-  }
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Data baru:", form);
-    router.push("/absensi");
+  // =========================
+  // GET DATA BY ID
+  // =========================
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/api/absensi/${id}`);
+        const json = await res.json();
+
+        if (json.data) {
+          setFormData({
+            tanggal: json.data.tanggal,
+            jam_masuk: json.data.masuk,
+            jam_keluar: json.data.keluar,
+            status: json.data.status,
+          });
+        }
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  // =========================
+  // HANDLE INPUT
+  // =========================
+  const handleChange = (e: any) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // =========================
+  // HANDLE SUBMIT UPDATE
+  // =========================
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:8080/api/absensi/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tanggal: formData.tanggal,
+          jam_masuk: formData.jam_masuk,
+          jam_keluar: formData.jam_keluar,
+          status: formData.status,
+        }),
+      });
+
+      const json = await res.json();
+
+      if (res.ok) {
+        alert("Berhasil update absensi!");
+        router.push("/absensi");
+      } else {
+        alert(json.message || "Gagal update data");
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      alert("Terjadi kesalahan koneksi ke server");
+    }
+  };
+
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
   return (
-    <div className="p-6 flex justify-center">
-      <div className="w-full max-w-lg bg-white rounded-lg shadow-lg p-6 space-y-6">
-        <h1 className="text-2xl font-bold text-gray-800 border-b pb-3">
-          Edit Absensi
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Nama */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Nama
-            </label>
-            <Input
-              value={form.nama}
-              onChange={(e) => setForm({ ...form, nama: e.target.value })}
-              className="rounded-md"
-            />
-          </div>
+    <div className="p-6 max-w-xl mx-auto space-y-6">
+      <h1 className="text-2xl font-bold">Edit Absensi</h1>
 
-          {/* Tanggal */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Tanggal
-            </label>
-            <Input
-              type="date"
-              value={form.tanggal}
-              onChange={(e) => setForm({ ...form, tanggal: e.target.value })}
-              className="rounded-md"
-            />
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block mb-1 font-medium">Tanggal</label>
+          <input
+            type="date"
+            name="tanggal"
+            className="w-full border px-3 py-2 rounded-md"
+            value={formData.tanggal}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          {/* Jam Masuk & Keluar */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Jam Masuk
-              </label>
-              <Input
-                type="time"
-                value={form.masuk}
-                onChange={(e) => setForm({ ...form, masuk: e.target.value })}
-                className="rounded-md"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                Jam Keluar
-              </label>
-              <Input
-                type="time"
-                value={form.keluar}
-                onChange={(e) => setForm({ ...form, keluar: e.target.value })}
-                className="rounded-md"
-              />
-            </div>
-          </div>
+        <div>
+          <label className="block mb-1 font-medium">Jam Masuk</label>
+          <input
+            type="time"
+            name="jam_masuk"
+            className="w-full border px-3 py-2 rounded-md"
+            value={formData.jam_masuk}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          {/* Status */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">
-              Status
-            </label>
-            <Select
-              value={form.status}
-              onValueChange={(val) => setForm({ ...form, status: val })}
-            >
-              <SelectTrigger className="rounded-md">
-                <SelectValue placeholder="Pilih status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Hadir">Hadir</SelectItem>
-                <SelectItem value="Ijin">Ijin</SelectItem>
-                <SelectItem value="Alpha">Alpha</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <div>
+          <label className="block mb-1 font-medium">Jam Keluar</label>
+          <input
+            type="time"
+            name="jam_keluar"
+            className="w-full border px-3 py-2 rounded-md"
+            value={formData.jam_keluar}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          {/* Buttons */}
-          <div className="flex gap-3 pt-2">
-            <Button
-              type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md"
-            >
-              Simpan
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.back()}
-              className="flex-1 rounded-md"
-            >
-              Batal
-            </Button>
-          </div>
-        </form>
-      </div>
+        <div>
+          <label className="block mb-1 font-medium">Status</label>
+          <select
+            name="status"
+            className="w-full border px-3 py-2 rounded-md"
+            value={formData.status}
+            onChange={handleChange}
+          >
+            <option value="Hadir">Hadir</option>
+            <option value="Ijin">Ijin</option>
+            <option value="Sakit">Sakit</option>
+            <option value="Alpha">Alpha</option>
+          </select>
+        </div>
+
+        <Button type="submit" className="bg-blue-600 text-white w-full">
+          Update Absensi
+        </Button>
+      </form>
     </div>
   );
 }

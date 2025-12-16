@@ -1,11 +1,15 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import path from "path";
+import fs from "fs";
 
-// PAKSA load .env dari folder backend
+// load .env dari folder backend
 dotenv.config({
   path: path.resolve(process.cwd(), ".env"),
 });
+
+// path sertifikat CA dari Aiven
+const caPath = path.resolve(process.cwd(), "certs/ca.pem");
 
 console.log("ENV CHECK:", {
   host: process.env.DB_HOST,
@@ -20,9 +24,15 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+
+  // 🔥 WAJIB UNTUK AIVEN
+  ssl: {
+    ca: fs.readFileSync(caPath),
+  },
+
   waitForConnections: true,
   connectionLimit: 10,
+  queueLimit: 0,
 });
 
 export default pool;
-export const db = pool;

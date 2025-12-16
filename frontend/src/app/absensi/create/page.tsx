@@ -16,7 +16,6 @@ export default function CreateAbsensiPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    nama: "",
     tanggal: "",
     masuk: "",
     keluar: "",
@@ -27,29 +26,42 @@ export default function CreateAbsensiPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Data baru:", formData);
-    // Tambahkan logic simpan ke API / database di sini
-    router.push("/absensi");
+
+    try {
+      const res = await fetch("http://localhost:8080/api/absensi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: 1, // sementara
+          tanggal: formData.tanggal,
+          jam_masuk: formData.masuk,
+          jam_keluar: formData.keluar,
+          status: formData.status,
+        }),
+      });
+
+      const json = await res.json();
+
+      if (res.ok) {
+        alert("Berhasil menambahkan absensi!");
+        router.push("/absensi");
+      } else {
+        alert(json.message || "Gagal menambahkan absensi");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error koneksi ke server");
+    }
   };
 
   return (
     <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-xl font-semibold mb-6">Tambah Data Absensi</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Nama */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Nama</label>
-          <Input
-            type="text"
-            placeholder="Nama Karyawan"
-            value={formData.nama}
-            onChange={(e) => handleChange("nama", e.target.value)}
-          />
-        </div>
+      <h1 className="text-xl font-semibold mb-6">Tambah Absensi</h1>
 
-        {/* Tanggal */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+
         <div>
           <label className="block text-sm font-medium mb-1">Tanggal</label>
           <Input
@@ -59,7 +71,6 @@ export default function CreateAbsensiPage() {
           />
         </div>
 
-        {/* Jam Masuk */}
         <div>
           <label className="block text-sm font-medium mb-1">Jam Masuk</label>
           <Input
@@ -69,7 +80,6 @@ export default function CreateAbsensiPage() {
           />
         </div>
 
-        {/* Jam Keluar */}
         <div>
           <label className="block text-sm font-medium mb-1">Jam Keluar</label>
           <Input
@@ -79,15 +89,14 @@ export default function CreateAbsensiPage() {
           />
         </div>
 
-        {/* Status */}
         <div>
           <label className="block text-sm font-medium mb-1">Status</label>
           <Select
-            onValueChange={(value) => handleChange("status", value)}
             value={formData.status}
+            onValueChange={(value) => handleChange("status", value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Pilih status" />
+              <SelectValue placeholder="Pilih Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Hadir">Hadir</SelectItem>
@@ -97,22 +106,9 @@ export default function CreateAbsensiPage() {
           </Select>
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-3 pt-4">
-          <Button
-            type="submit"
-            className="bg-green-500 hover:bg-green-600 text-white"
-          >
-            Simpan
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.push("/absensi")}
-          >
-            Batal
-          </Button>
-        </div>
+        <Button type="submit" className="bg-blue-600 text-white">
+          Simpan
+        </Button>
       </form>
     </div>
   );

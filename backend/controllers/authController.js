@@ -4,48 +4,77 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const login = async (req, res) => {
-  // VALIDASI BODY SUPAYA TIDAK ADA ERROR DESTRUCTURE
-  if (!req.body || Object.keys(req.body).length === 0) {
-    return res.status(400).json({ message: "Body JSON tidak terkirim" });
-  }
-
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email dan password wajib diisi" });
-  }
-
   try {
-    const [results] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
-
-    if (results.length === 0) {
-      return res.status(404).json({ message: "User not found" });
+    // 1️⃣ Validasi body
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({
+        message: "Body JSON tidak terkirim",
+      });
     }
 
-    const user = results[0];
-    const match = await bcrypt.compare(password, user.password);
+    const { email, password } = req.body;
 
-    if (!match) {
-      return res.status(401).json({ message: "Invalid credentials" });
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email dan password wajib diisi",
+      });
+    }
+
+    // 2️⃣ Query user
+    const [rows] = await pool.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: "User tidak ditemukan",
+      });
+    }
+
+    const user = rows[0];
+
+    // 3️⃣ Cek password (bcrypt)
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Email atau password salah",
+      });
+    }
+
+    // 4️⃣ Generate JWT
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        message: "JWT_SECRET belum diset di .env",
+      });
     }
 
     const token = jwt.sign(
-      { id: user.id, role: user.id_role },
+      {
+        id: user.id,
+        role: user.id_role,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    // hilangkan password dari response
+    // 5️⃣ Hilangkan password dari response
     const { password: _, ...userWithoutPassword } = user;
 
-    res.json({
-      message: "Login successful",
+    // 6️⃣ Response sukses
+    return res.status(200).json({
+      message: "Login berhasil",
       token,
-      user: userWithoutPassword
+      user: userWithoutPassword,
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Database error" });
+    console.error("❌ LOGIN ERROR:", err);
+
+    return res.status(500).json({
+      message: "Database error",
+      error: err.message,
+    });
   }
 };
