@@ -16,6 +16,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Edit2, Trash2, Search } from "lucide-react";
 
+/* ================= HELPER ================= */
+
+const formatTanggal = (dateString: string) => {
+  if (!dateString) return "-";
+
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 /* ================= TYPES ================= */
 
 type Jadwal = {
@@ -113,7 +127,7 @@ export default function Page() {
     setFormData({
       user_id: j.user_id,
       shift_id: j.shift_id,
-      tanggal: j.tanggal,
+      tanggal: j.tanggal.slice(0, 10), // aman untuk input date
       keterangan: j.keterangan,
     });
     setOpen(true);
@@ -142,7 +156,7 @@ export default function Page() {
 
     return (
       (!searchNama || nama.includes(searchNama.toLowerCase())) &&
-      (!filterTanggal || j.tanggal === filterTanggal)
+      (!filterTanggal || j.tanggal.slice(0, 10) === filterTanggal)
     );
   });
 
@@ -199,15 +213,22 @@ export default function Page() {
                     {user?.nama}
                   </CardTitle>
                   <p className="text-sm text-gray-500">
-                    {shift?.nama_shift} • {j.tanggal}
+                    {shift?.nama_shift} • {formatTanggal(j.tanggal)}
                   </p>
                 </CardHeader>
+
                 <CardContent className="text-sm space-y-1">
-                  <p>Jam: {shift?.jam_mulai} - {shift?.jam_selesai}</p>
+                  <p>
+                    Jam: {shift?.jam_mulai} - {shift?.jam_selesai}
+                  </p>
                   <p>Keterangan: {j.keterangan}</p>
 
                   <div className="flex justify-end gap-2 pt-3">
-                    <Button size="sm" variant="outline" onClick={() => handleEdit(j)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEdit(j)}
+                    >
                       <Edit2 className="h-4 w-4" />
                     </Button>
                     <Button
@@ -242,7 +263,10 @@ export default function Page() {
                 className="w-full border rounded px-2 py-2"
                 value={formData.user_id}
                 onChange={(e) =>
-                  setFormData({ ...formData, user_id: Number(e.target.value) })
+                  setFormData({
+                    ...formData,
+                    user_id: Number(e.target.value),
+                  })
                 }
               >
                 <option value={0}>Pilih karyawan</option>
@@ -260,7 +284,10 @@ export default function Page() {
                 className="w-full border rounded px-2 py-2"
                 value={formData.shift_id}
                 onChange={(e) =>
-                  setFormData({ ...formData, shift_id: Number(e.target.value) })
+                  setFormData({
+                    ...formData,
+                    shift_id: Number(e.target.value),
+                  })
                 }
               >
                 <option value={0}>Pilih shift</option>
@@ -300,7 +327,10 @@ export default function Page() {
               <Input
                 value={formData.keterangan}
                 onChange={(e) =>
-                  setFormData({ ...formData, keterangan: e.target.value })
+                  setFormData({
+                    ...formData,
+                    keterangan: e.target.value,
+                  })
                 }
               />
             </div>

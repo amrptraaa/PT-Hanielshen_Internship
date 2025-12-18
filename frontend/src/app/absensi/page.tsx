@@ -38,6 +38,17 @@ type User = {
   nama: string;
 };
 
+/* ================= HELPER ================= */
+
+const formatDate = (date: string) => {
+  if (!date) return "-";
+  return new Date(date).toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 /* ================= PAGE ================= */
 
 export default function AbsensiPage() {
@@ -97,7 +108,7 @@ export default function AbsensiPage() {
     setEditData(item);
     setForm({
       user_id: String(item.user_id),
-      tanggal: item.tanggal.slice(0, 10),
+      tanggal: item.tanggal.slice(0, 10), // khusus input date
       jam_masuk: item.jam_masuk || "",
       jam_keluar: item.jam_keluar || "",
       status: item.status,
@@ -160,7 +171,7 @@ export default function AbsensiPage() {
             {absensi.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{getNamaUser(item.user_id)}</TableCell>
-                <TableCell>{item.tanggal.slice(0, 10)}</TableCell>
+                <TableCell>{formatDate(item.tanggal)}</TableCell>
                 <TableCell>{item.jam_masuk || "-"}</TableCell>
                 <TableCell>{item.jam_keluar || "-"}</TableCell>
 
@@ -215,7 +226,7 @@ export default function AbsensiPage() {
           {viewData && (
             <div className="space-y-2 text-sm">
               <p><b>Nama:</b> {getNamaUser(viewData.user_id)}</p>
-              <p><b>Tanggal:</b> {viewData.tanggal.slice(0, 10)}</p>
+              <p><b>Tanggal:</b> {formatDate(viewData.tanggal)}</p>
               <p><b>Jam Masuk:</b> {viewData.jam_masuk || "-"}</p>
               <p><b>Jam Keluar:</b> {viewData.jam_keluar || "-"}</p>
               <p><b>Status:</b> {viewData.status}</p>
