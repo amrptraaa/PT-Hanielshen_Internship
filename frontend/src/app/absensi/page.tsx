@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, Trash2, Pencil } from "lucide-react";
+import { Eye, Trash2, Pencil, Plus } from "lucide-react";
 
 /* ================= TYPES ================= */
 
@@ -56,6 +56,7 @@ export default function AbsensiPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [viewData, setViewData] = useState<Absensi | null>(null);
   const [editData, setEditData] = useState<Absensi | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const [form, setForm] = useState({
     user_id: "",
@@ -84,6 +85,16 @@ export default function AbsensiPage() {
 
   /* ================= HELPERS ================= */
 
+  const resetForm = () => {
+    setForm({
+      user_id: "",
+      tanggal: "",
+      jam_masuk: "",
+      jam_keluar: "",
+      status: "Hadir",
+    });
+  };
+
   const getNamaUser = (id: number) =>
     users.find((u) => u.id === id)?.nama || "-";
 
@@ -102,13 +113,34 @@ export default function AbsensiPage() {
     }
   };
 
+  /* ================= CREATE ================= */
+
+  const submitCreate = async () => {
+    try {
+      await api.post("/absensi", {
+        user_id: Number(form.user_id),
+        tanggal: form.tanggal,
+        jam_masuk: form.jam_masuk || null,
+        jam_keluar: form.jam_keluar || null,
+        status: form.status,
+      });
+
+      setCreateOpen(false);
+      resetForm();
+      fetchAbsensi();
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menambahkan absensi");
+    }
+  };
+
   /* ================= EDIT ================= */
 
   const openEdit = (item: Absensi) => {
     setEditData(item);
     setForm({
       user_id: String(item.user_id),
-      tanggal: item.tanggal.slice(0, 10), // khusus input date
+      tanggal: item.tanggal.slice(0, 10),
       jam_masuk: item.jam_masuk || "",
       jam_keluar: item.jam_keluar || "",
       status: item.status,
@@ -128,9 +160,9 @@ export default function AbsensiPage() {
       });
 
       setEditData(null);
+      resetForm();
       fetchAbsensi();
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("Gagal update absensi");
     }
   };
@@ -148,11 +180,90 @@ export default function AbsensiPage() {
     }
   };
 
+  /* ================= FORM UI ================= */
+
+  const AbsensiForm = () => (
+    <div className="space-y-4">
+      <div>
+        <Label>Nama Karyawan</Label>
+        <select
+          value={form.user_id}
+          onChange={(e) => setForm({ ...form, user_id: e.target.value })}
+          className="w-full border rounded px-3 py-2"
+        >
+          <option value="">Pilih Karyawan</option>
+          {users.map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.nama}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <Label>Tanggal</Label>
+        <Input
+          type="date"
+          value={form.tanggal}
+          onChange={(e) => setForm({ ...form, tanggal: e.target.value })}
+        />
+      </div>
+
+      <div className="flex gap-3">
+        <div className="w-1/2">
+          <Label>Jam Masuk</Label>
+          <Input
+            type="time"
+            value={form.jam_masuk}
+            onChange={(e) =>
+              setForm({ ...form, jam_masuk: e.target.value })
+            }
+          />
+        </div>
+        <div className="w-1/2">
+          <Label>Jam Keluar</Label>
+          <Input
+            type="time"
+            value={form.jam_keluar}
+            onChange={(e) =>
+              setForm({ ...form, jam_keluar: e.target.value })
+            }
+          />
+        </div>
+      </div>
+
+      <div>
+        <Label>Status</Label>
+        <select
+          value={form.status}
+          onChange={(e) => setForm({ ...form, status: e.target.value })}
+          className="w-full border rounded px-3 py-2"
+        >
+          <option value="Hadir">Hadir</option>
+          <option value="Izin">Izin</option>
+          <option value="Sakit">Sakit</option>
+          <option value="Alpha">Alpha</option>
+        </select>
+      </div>
+    </div>
+  );
+
   /* ================= UI ================= */
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-semibold mb-6">Data Absensi</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-xl font-semibold">Data Absensi</h1>
+        <Button
+          onClick={() => {
+            resetForm();
+            setCreateOpen(true);
+          }}
+          className="bg-green-600 text-white"
+        >
+          <Plus size={16} className="mr-2" /> Tambah Absensi
+        </Button>
+      </div>
 
       <div className="border rounded-xl shadow-sm overflow-hidden">
         <Table>
@@ -174,7 +285,6 @@ export default function AbsensiPage() {
                 <TableCell>{formatDate(item.tanggal)}</TableCell>
                 <TableCell>{item.jam_masuk || "-"}</TableCell>
                 <TableCell>{item.jam_keluar || "-"}</TableCell>
-
                 <TableCell>
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium border ${statusBadge(
@@ -184,29 +294,14 @@ export default function AbsensiPage() {
                     {item.status}
                   </span>
                 </TableCell>
-
                 <TableCell className="flex gap-2">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => setViewData(item)}
-                  >
+                  <Button size="icon" variant="outline" onClick={() => setViewData(item)}>
                     <Eye size={16} />
                   </Button>
-
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => openEdit(item)}
-                  >
+                  <Button size="icon" variant="outline" onClick={() => openEdit(item)}>
                     <Pencil size={16} />
                   </Button>
-
-                  <Button
-                    size="icon"
-                    variant="destructive"
-                    onClick={() => deleteAbsensi(item.id)}
-                  >
+                  <Button size="icon" variant="destructive" onClick={() => deleteAbsensi(item.id)}>
                     <Trash2 size={16} />
                   </Button>
                 </TableCell>
@@ -216,110 +311,22 @@ export default function AbsensiPage() {
         </Table>
       </div>
 
-      {/* VIEW MODAL */}
-      <Dialog open={!!viewData} onOpenChange={() => setViewData(null)}>
+      {/* CREATE MODAL */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Detail Absensi</DialogTitle>
+            <DialogTitle>Tambah Absensi</DialogTitle>
           </DialogHeader>
-
-          {viewData && (
-            <div className="space-y-2 text-sm">
-              <p><b>Nama:</b> {getNamaUser(viewData.user_id)}</p>
-              <p><b>Tanggal:</b> {formatDate(viewData.tanggal)}</p>
-              <p><b>Jam Masuk:</b> {viewData.jam_masuk || "-"}</p>
-              <p><b>Jam Keluar:</b> {viewData.jam_keluar || "-"}</p>
-              <p><b>Status:</b> {viewData.status}</p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* EDIT MODAL */}
-      <Dialog open={!!editData} onOpenChange={() => setEditData(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Absensi</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div>
-              <Label>Nama Karyawan</Label>
-              <select
-                value={form.user_id}
-                onChange={(e) =>
-                  setForm({ ...form, user_id: e.target.value })
-                }
-                className="w-full border rounded px-3 py-2"
-              >
-                <option value="">Pilih Karyawan</option>
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.nama}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <Label>Tanggal</Label>
-              <Input
-                type="date"
-                value={form.tanggal}
-                onChange={(e) =>
-                  setForm({ ...form, tanggal: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <div className="w-1/2">
-                <Label>Jam Masuk</Label>
-                <Input
-                  type="time"
-                  value={form.jam_masuk}
-                  onChange={(e) =>
-                    setForm({ ...form, jam_masuk: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="w-1/2">
-                <Label>Jam Keluar</Label>
-                <Input
-                  type="time"
-                  value={form.jam_keluar}
-                  onChange={(e) =>
-                    setForm({ ...form, jam_keluar: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label>Status</Label>
-              <select
-                value={form.status}
-                onChange={(e) =>
-                  setForm({ ...form, status: e.target.value })
-                }
-                className="w-full border rounded px-3 py-2"
-              >
-                <option value="Hadir">Hadir</option>
-                <option value="Izin">Izin</option>
-                <option value="Sakit">Sakit</option>
-                <option value="Alpha">Alpha</option>
-              </select>
-            </div>
-          </div>
-
+          <AbsensiForm />
           <DialogFooter>
-            <Button onClick={submitEdit} className="bg-green-600 text-white">
-              Simpan Perubahan
+            <Button onClick={submitCreate} className="bg-green-600 text-white">
+              Simpan
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* VIEW & EDIT MODAL TETAP AMAN */}
     </div>
   );
 }
