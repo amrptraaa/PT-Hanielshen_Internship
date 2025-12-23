@@ -1,5 +1,5 @@
 import express from "express";
-import { login } from "../controllers/authController.js";
+import { loginDesktop } from "../controllers/authController.js";
 
 const router = express.Router();
 
@@ -24,6 +24,7 @@ const router = express.Router();
  *       200:
  *         description: Login successful
  */
-router.post("/login", login);
+router.post("/login/desktop", loginDesktop);
+
 
 export default router;
