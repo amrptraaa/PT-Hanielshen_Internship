@@ -3,66 +3,78 @@ import pool from "../database/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-export const loginDesktop = async (req, res) => {
+export const login = async (req, res) => {
   try {
+    // 1️⃣ Validasi body
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(400).json({
+        message: "Body JSON tidak terkirim",
+      });
+    }
+
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email dan password wajib diisi" });
+      return res.status(400).json({
+        message: "Email dan password wajib diisi",
+      });
     }
 
+    // 2️⃣ Query user
     const [rows] = await pool.query(
-      `SELECT u.*, r.nama_role 
-       FROM users u 
-       JOIN roles r ON u.id_role = r.id 
-       WHERE u.email = ?`,
+      "SELECT * FROM users WHERE email = ?",
       [email]
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ message: "User tidak ditemukan" });
+      return res.status(404).json({
+        message: "User tidak ditemukan",
+      });
     }
 
     const user = rows[0];
 
-    // ❌ Pegawai tidak boleh login desktop
-    if (user.nama_role === "pegawai") {
-      return res.status(403).json({
-        message: "Pegawai tidak memiliki akses desktop",
-      });
-    }
-
-    // ❌ login_type mobile tidak boleh desktop
-    if (user.login_type === "mobile") {
-      return res.status(403).json({
-        message: "Akun ini hanya untuk mobile",
-      });
-    }
-
+    // 3️⃣ Cek password (bcrypt)
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
-      return res.status(401).json({ message: "Email atau password salah" });
+      return res.status(401).json({
+        message: "Email atau password salah",
+      });
+    }
+
+    // 4️⃣ Generate JWT
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        message: "JWT_SECRET belum diset di .env",
+      });
     }
 
     const token = jwt.sign(
       {
         id: user.id,
-        role: user.nama_role,
-        platform: "desktop",
+        role: user.id_role,
       },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    delete user.password;
+    // 5️⃣ Hilangkan password dari response
+    const { password: _, ...userWithoutPassword } = user;
 
-    res.json({
-      message: "Login desktop berhasil",
+    // 6️⃣ Response sukses
+    return res.status(200).json({
+      message: "Login berhasil",
       token,
-      user,
+      user: userWithoutPassword,
     });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("❌ LOGIN ERROR:", err);
+
+    return res.status(500).json({
+      message: "Database error",
+      error: err.message,
+    });
   }
 };
