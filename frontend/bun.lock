@@ -42,6 +42,8 @@
         "react-hook-form": "^7.62.0",
         "react-hot-toast": "^2.6.0",
         "recharts": "^3.1.2",
+        "soner": "^1.1.0",
+        "sonner": "^2.0.7",
         "tailwind-merge": "^3.3.1",
         "three": "^0.179.1",
         "uploadthing": "^7.7.4",
@@ -1412,6 +1414,10 @@
     "slash": ["slash@3.0.0", "", {}, "sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q=="],
 
     "snake-case": ["snake-case@2.1.0", "", { "dependencies": { "no-case": "^2.2.0" } }, "sha512-FMR5YoPFwOLuh4rRz92dywJjyKYZNLpMn1R5ujVpIYkbA9p01fq8RMg0FkO4M+Yobt4MjHeLTJVm5xFFBHSV2Q=="],
+
+    "soner": ["soner@1.1.0", "", { "peerDependencies": { "react": "^16.0.0" } }, "sha512-Nkdglw4pRvJ4l2pBE7m+101OWWyogZTIrLhbKHMnTb5ey/WeWhzFww0f3KeQuVqt/RKzm1K/pbmNoz40as1QAg=="],
+
+    "sonner": ["sonner@2.0.7", "", { "peerDependencies": { "react": "^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react-dom": "^18.0.0 || ^19.0.0 || ^19.0.0-rc" } }, "sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w=="],
 
     "source-list-map": ["source-list-map@2.0.1", "", {}, "sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw=="],
 

@@ -12,6 +12,17 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Edit2, Trash2, Search } from "lucide-react";
@@ -61,6 +72,7 @@ export default function Page() {
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Jadwal | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const [searchNama, setSearchNama] = useState("");
   const [filterTanggal, setFilterTanggal] = useState("");
@@ -127,7 +139,7 @@ export default function Page() {
     setFormData({
       user_id: j.user_id,
       shift_id: j.shift_id,
-      tanggal: j.tanggal.slice(0, 10), // aman untuk input date
+      tanggal: j.tanggal.slice(0, 10),
       keterangan: j.keterangan,
     });
     setOpen(true);
@@ -174,9 +186,9 @@ export default function Page() {
             setEditing(null);
             resetForm();
           }}
-          className="bg-[#039155] text-white"
+          className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771] font-semibold text-base px-5 py-2.5 h-auto"
         >
-          <Plus className="mr-2 h-4 w-4" /> Tambah Jadwal
+          <Plus className="mr-2 h-5 w-5" /> Tambah Jadwal
         </Button>
       </div>
 
@@ -209,9 +221,7 @@ export default function Page() {
             return (
               <Card key={j.id}>
                 <CardHeader>
-                  <CardTitle className="text-[#039155]">
-                    {user?.nama}
-                  </CardTitle>
+                  <CardTitle className="text-[#039155]">{user?.nama}</CardTitle>
                   <p className="text-sm text-gray-500">
                     {shift?.nama_shift} • {formatTanggal(j.tanggal)}
                   </p>
@@ -227,17 +237,50 @@ export default function Page() {
                     <Button
                       size="sm"
                       variant="outline"
+                      className="text-yellow-600 border-yellow-200 hover:bg-yellow-50"
                       onClick={() => handleEdit(j)}
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDelete(j.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-600" />
-                    </Button>
+
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600 border-red-200 hover:bg-red-50"
+                          onClick={() => setDeleteId(j.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Konfirmasi Penghapusan
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Jadwal <b>{user?.nama}</b> pada{" "}
+                            <b>{formatTanggal(j.tanggal)}</b> akan dihapus
+                            permanen.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter className="gap-3 sm:gap-2">
+                          <AlertDialogCancel>Batal</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                            onClick={() => {
+                              if (deleteId) handleDelete(deleteId);
+                              setDeleteId(null);
+                            }}
+                          >
+                            Hapus
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardContent>
               </Card>
@@ -249,15 +292,15 @@ export default function Page() {
       {/* ================= MODAL ================= */}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg p-6">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-800">
               {editing ? "Edit Jadwal" : "Tambah Jadwal"}
             </DialogTitle>
           </DialogHeader>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
+            <div className="space-y-2">
               <Label>Nama Karyawan</Label>
               <select
                 className="w-full border rounded px-2 py-2"
@@ -278,7 +321,7 @@ export default function Page() {
               </select>
             </div>
 
-            <div>
+            <div className="space-y-2">
               <Label>Shift</Label>
               <select
                 className="w-full border rounded px-2 py-2"
@@ -299,7 +342,7 @@ export default function Page() {
               </select>
             </div>
 
-            <div>
+            <div className="space-y-2">
               <Label>Tanggal</Label>
               <Input
                 type="date"
@@ -310,7 +353,7 @@ export default function Page() {
               />
             </div>
 
-            <div>
+            <div className="space-y-2">
               <Label>Jam</Label>
               <Input
                 readOnly
@@ -322,7 +365,7 @@ export default function Page() {
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-2 space-y-2">
               <Label>Keterangan</Label>
               <Input
                 value={formData.keterangan}

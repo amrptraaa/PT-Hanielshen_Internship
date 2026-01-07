@@ -18,9 +18,21 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, Trash2, Pencil, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 /* ================= TYPES ================= */
 
@@ -58,6 +70,7 @@ export default function AbsensiPage() {
   const [viewData, setViewData] = useState<Absensi | null>(null);
   const [editData, setEditData] = useState<Absensi | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const [form, setForm] = useState({
     user_id: "",
@@ -114,7 +127,7 @@ export default function AbsensiPage() {
     }
   };
 
-  /* ================= CREATE ================= */
+  //* ================= CREATE ================= */
 
   const submitCreate = async () => {
     try {
@@ -126,12 +139,13 @@ export default function AbsensiPage() {
         status: form.status,
       });
 
+      toast.success("Absensi berhasil ditambahkan!");
       setCreateOpen(false);
       resetForm();
       fetchAbsensi();
     } catch (err) {
       console.error(err);
-      alert("Gagal menambahkan absensi");
+      toast.error("Gagal menambahkan absensi");
     }
   };
 
@@ -160,24 +174,26 @@ export default function AbsensiPage() {
         status: form.status,
       });
 
+      toast.success("Data absensi berhasil diperbarui!");
       setEditData(null);
       resetForm();
       fetchAbsensi();
-    } catch {
-      alert("Gagal update absensi");
+    } catch (error) {
+      console.error(error);
+      toast.error("Gagal memperbarui absensi");
     }
   };
 
   /* ================= DELETE ================= */
 
   const deleteAbsensi = async (id: number) => {
-    if (!confirm("Yakin ingin menghapus absensi ini?")) return;
-
     try {
       await api.delete(`/absensi/${id}`);
+      toast.success("Data absensi berhasil dihapus!");
       fetchAbsensi();
-    } catch {
-      alert("Gagal menghapus absensi");
+    } catch (error) {
+      console.error(error);
+      toast.error("Gagal menghapus absensi");
     }
   };
 
@@ -256,9 +272,9 @@ export default function AbsensiPage() {
             resetForm();
             setCreateOpen(true);
           }}
-          className="bg-green-600 text-white"
+          className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771] font-semibold text-base px-5 py-2.5 h-auto"
         >
-          <Plus size={16} className="mr-2" /> Tambah Absensi
+          <Plus className="mr-2 h-5 w-5" /> Tambah Absensi
         </Button>
       </div>
 
@@ -295,19 +311,7 @@ export default function AbsensiPage() {
 
                 <TableCell>
                   {item.foto ? (
-                    <div className="flex items-center gap-2 px-3 py-1 border rounded-lg text-blue-600 hover:bg-gray-50 cursor-pointer">
-                      <svg
-                        width="16"
-                        height="16"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M21.44 11.05l-8.49 8.49a5.5 5.5 0 01-7.78-7.78l8.49-8.49a3.5 3.5 0 014.95 4.95l-8.49 8.49a1.5 1.5 0 01-2.12-2.12l7.78-7.78" />
-                      </svg>
-                      <span className="text-sm">Foto Absensi</span>
-                    </div>
+                    <span className="text-blue-600 text-sm">Foto Absensi</span>
                   ) : (
                     <span className="text-gray-400 text-sm">-</span>
                   )}
@@ -315,32 +319,69 @@ export default function AbsensiPage() {
 
                 <TableCell className="flex gap-2">
                   <Button
-                    size="icon"
+                    size="sm"
                     variant="outline"
+                    className="text-blue-600 border-blue-200 hover:bg-blue-50 h-10 w-10 p-0"
                     onClick={() => setViewData(item)}
                   >
-                    <Eye size={16} />
+                    <Eye size={18} />
                   </Button>
+
                   <Button
-                    size="icon"
+                    size="sm"
                     variant="outline"
+                    className="text-yellow-600 border-yellow-200 hover:bg-yellow-50 h-10 w-10 p-0"
                     onClick={() => openEdit(item)}
                   >
-                    <Pencil size={16} />
+                    <Pencil size={18} />
                   </Button>
-                  <Button
-                    size="icon"
-                    variant="destructive"
-                    onClick={() => deleteAbsensi(item.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-red-600 border-red-200 hover:bg-red-50 h-10 w-10 p-0"
+                        onClick={() => setDeleteId(item.id)}
+                      >
+                        <Trash2 size={18} />
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Konfirmasi Penghapusan
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Data absensi <b>{getNamaUser(item.user_id)}</b> pada{" "}
+                          <b>{formatDate(item.tanggal)}</b> akan dihapus
+                          permanen.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                          onClick={() => {
+                            if (deleteId) deleteAbsensi(deleteId);
+                            setDeleteId(null);
+                          }}
+                        >
+                          Hapus
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      {/* CREATE */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-lg p-6">
           <DialogHeader>
@@ -352,11 +393,7 @@ export default function AbsensiPage() {
           <AbsensiForm />
 
           <div className="flex justify-end gap-4 pt-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setCreateOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setCreateOpen(false)}>
               Batal
             </Button>
             <Button
@@ -366,6 +403,58 @@ export default function AbsensiPage() {
               Simpan
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* VIEW */}
+      <Dialog open={!!viewData} onOpenChange={() => setViewData(null)}>
+        <DialogContent className="max-w-lg p-6">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-800">
+              Detail Absensi
+            </DialogTitle>
+          </DialogHeader>
+
+          {viewData && (
+            <div className="space-y-3 text-sm">
+              <div>Nama: {getNamaUser(viewData.user_id)}</div>
+              <div>Tanggal: {formatDate(viewData.tanggal)}</div>
+              <div>Jam Masuk: {viewData.jam_masuk || "-"}</div>
+              <div>Jam Keluar: {viewData.jam_keluar || "-"}</div>
+              <div>Status: {viewData.status}</div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewData(null)}>
+              Tutup
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* EDIT */}
+      <Dialog open={!!editData} onOpenChange={() => setEditData(null)}>
+        <DialogContent className="max-w-lg p-6">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-800">
+              Edit Absensi
+            </DialogTitle>
+          </DialogHeader>
+
+          <AbsensiForm />
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditData(null)}>
+              Batal
+            </Button>
+            <Button
+              onClick={submitEdit}
+              className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771]"
+            >
+              Simpan Perubahan
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
