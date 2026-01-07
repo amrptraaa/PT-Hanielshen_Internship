@@ -31,6 +31,7 @@ type Absensi = {
   jam_masuk: string | null;
   jam_keluar: string | null;
   status: string;
+  foto?: string | null;
 };
 
 type User = {
@@ -183,13 +184,13 @@ export default function AbsensiPage() {
   /* ================= FORM UI ================= */
 
   const AbsensiForm = () => (
-    <div className="space-y-4">
-      <div>
+    <div className="space-y-6 mt-5">
+      <div className="space-y-2">
         <Label>Nama Karyawan</Label>
         <select
           value={form.user_id}
           onChange={(e) => setForm({ ...form, user_id: e.target.value })}
-          className="w-full border rounded px-3 py-2"
+          className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#039155]"
         >
           <option value="">Pilih Karyawan</option>
           {users.map((u) => (
@@ -200,7 +201,7 @@ export default function AbsensiPage() {
         </select>
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label>Tanggal</Label>
         <Input
           type="date"
@@ -209,35 +210,31 @@ export default function AbsensiPage() {
         />
       </div>
 
-      <div className="flex gap-3">
-        <div className="w-1/2">
+      <div className="flex gap-4">
+        <div className="w-1/2 space-y-2">
           <Label>Jam Masuk</Label>
           <Input
             type="time"
             value={form.jam_masuk}
-            onChange={(e) =>
-              setForm({ ...form, jam_masuk: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, jam_masuk: e.target.value })}
           />
         </div>
-        <div className="w-1/2">
+        <div className="w-1/2 space-y-2">
           <Label>Jam Keluar</Label>
           <Input
             type="time"
             value={form.jam_keluar}
-            onChange={(e) =>
-              setForm({ ...form, jam_keluar: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, jam_keluar: e.target.value })}
           />
         </div>
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label>Status</Label>
         <select
           value={form.status}
           onChange={(e) => setForm({ ...form, status: e.target.value })}
-          className="w-full border rounded px-3 py-2"
+          className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#039155]"
         >
           <option value="Hadir">Hadir</option>
           <option value="Izin">Izin</option>
@@ -274,6 +271,7 @@ export default function AbsensiPage() {
               <TableHead>Masuk</TableHead>
               <TableHead>Keluar</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Foto</TableHead>
               <TableHead className="w-[150px]">Aksi</TableHead>
             </TableRow>
           </TableHeader>
@@ -294,14 +292,47 @@ export default function AbsensiPage() {
                     {item.status}
                   </span>
                 </TableCell>
+
+                <TableCell>
+                  {item.foto ? (
+                    <div className="flex items-center gap-2 px-3 py-1 border rounded-lg text-blue-600 hover:bg-gray-50 cursor-pointer">
+                      <svg
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M21.44 11.05l-8.49 8.49a5.5 5.5 0 01-7.78-7.78l8.49-8.49a3.5 3.5 0 014.95 4.95l-8.49 8.49a1.5 1.5 0 01-2.12-2.12l7.78-7.78" />
+                      </svg>
+                      <span className="text-sm">Foto Absensi</span>
+                    </div>
+                  ) : (
+                    <span className="text-gray-400 text-sm">-</span>
+                  )}
+                </TableCell>
+
                 <TableCell className="flex gap-2">
-                  <Button size="icon" variant="outline" onClick={() => setViewData(item)}>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => setViewData(item)}
+                  >
                     <Eye size={16} />
                   </Button>
-                  <Button size="icon" variant="outline" onClick={() => openEdit(item)}>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => openEdit(item)}
+                  >
                     <Pencil size={16} />
                   </Button>
-                  <Button size="icon" variant="destructive" onClick={() => deleteAbsensi(item.id)}>
+                  <Button
+                    size="icon"
+                    variant="destructive"
+                    onClick={() => deleteAbsensi(item.id)}
+                  >
                     <Trash2 size={16} />
                   </Button>
                 </TableCell>
@@ -310,23 +341,33 @@ export default function AbsensiPage() {
           </TableBody>
         </Table>
       </div>
-
-      {/* CREATE MODAL */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg p-6">
           <DialogHeader>
-            <DialogTitle>Tambah Absensi</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-800">
+              Tambah Absensi
+            </DialogTitle>
           </DialogHeader>
+
           <AbsensiForm />
-          <DialogFooter>
-            <Button onClick={submitCreate} className="bg-green-600 text-white">
+
+          <div className="flex justify-end gap-4 pt-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setCreateOpen(false)}
+            >
+              Batal
+            </Button>
+            <Button
+              onClick={submitCreate}
+              className="bg-[#039155] text-[#FFFEFD] hover:bg-[#28A771]"
+            >
               Simpan
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
-
-      {/* VIEW & EDIT MODAL TETAP AMAN */}
     </div>
   );
 }
