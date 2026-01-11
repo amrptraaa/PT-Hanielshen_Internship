@@ -120,7 +120,7 @@ export default function AbsensiPage() {
         return "bg-yellow-100 text-yellow-700 border-yellow-300";
       case "sakit":
         return "bg-blue-100 text-blue-700 border-blue-300";
-      case "alpha":
+      case "alpa":
         return "bg-red-100 text-red-700 border-red-300";
       default:
         return "bg-gray-100";
@@ -255,7 +255,7 @@ export default function AbsensiPage() {
           <option value="Hadir">Hadir</option>
           <option value="Izin">Izin</option>
           <option value="Sakit">Sakit</option>
-          <option value="Alpha">Alpha</option>
+          <option value="Alpa">Alpha</option>
         </select>
       </div>
     </div>
